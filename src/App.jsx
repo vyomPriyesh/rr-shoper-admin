@@ -20,7 +20,7 @@ function App() {
       <Routes>
         <Route path='/' element={user?.role ? <Navigate to={`/dashboard`} /> : <Login />} />
         <Route
-          path="/dashboard/*"
+          path="/*"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <Admin role='admin' />

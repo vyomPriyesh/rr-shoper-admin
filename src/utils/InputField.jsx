@@ -1,8 +1,11 @@
 // components/common/InputField.jsx
 
-import { Input } from 'antd'
+import { Image, Input, Upload } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { IoChevronDown } from 'react-icons/io5'
+import { LuEye } from 'react-icons/lu';
+import { MdOutlineEdit } from 'react-icons/md';
+import { RiDeleteBin6Line, RiUploadCloud2Fill } from 'react-icons/ri';
 
 const InputField = (props) => {
     const {
@@ -61,6 +64,27 @@ const InputField = (props) => {
         }
     }
 
+    const editInputRef = useRef(null);
+    const [fileList, setFileList] = useState([]);
+    const [preview, setPreview] = useState({
+        open: false,
+        image: "",
+    });
+
+
+    const handleChange = ({ fileList }) => {
+        setFileList(fileList);
+    };
+
+    const handlePreview = async (file) => {
+        console.log('object')
+        setPreview({
+            open: true,
+            image: file.url || URL.createObjectURL(file.originFileObj),
+        });
+    };
+
+
     return (
         <div className="w-full">
             {label && (
@@ -73,12 +97,12 @@ const InputField = (props) => {
             {type !== "textarea" &&
                 type !== "drop-single-select" &&
                 type !== "drop-multi-select" &&
-                type !== "password" && (
+                type !== "password" && type !== 'upload' && (
                     <Input
                         placeholder={placeholder}
                         onChange={onChange}
                         {...rest}
-                        className={`!w-full !h-14 !rounded-2xl
+                        className={`!w-full !h-14 !rounded-lg !text-base
               !border !border-borderColor
               !px-5 !outline-none !bg-white
               !text-heading
@@ -297,6 +321,43 @@ const InputField = (props) => {
                     </div>
                 </div>
             )}
+
+            {/* ================= UPLOAD ================= */}
+            {type === 'upload' && (
+                <>
+                    <Upload
+                        listType="picture-card"
+                        multiple={multiple}
+                        beforeUpload={() => false}
+                        onChange={handleChange}
+                        onPreview={handlePreview}
+                    >
+                        <button
+                            type="button"
+                            className='text-lg flex flex-col place-items-center justify-center'
+                            style={{
+                                border: 0,
+                                background: "none",
+                            }}
+                        >
+                            <span className='text-2xl'><RiUploadCloud2Fill /></span>
+                            <div style={{ marginTop: 8 }}>Upload</div>
+                        </button>
+                        <Image
+                            styles={{ root: { display: 'none' } }}
+                            preview={{
+                                open: preview.open,
+                                onOpenChange: visible => setPreview((prev) => ({
+                                    ...prev,
+                                    open: visible,
+                                })),    
+                            }}
+                            src={preview.image}
+                        />
+                    </Upload>
+                </>
+            )
+            }
         </div>
     )
 }
