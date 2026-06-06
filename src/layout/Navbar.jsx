@@ -18,11 +18,7 @@ const Navbar = ({ toggleMenu }) => {
     const { data: profileData, error: profileErrorData, isError: profileError } = useQuery({
         queryKey: ["profile", user?.token],
         queryFn: async () => {
-            const response = await api.get(auth.profile, {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            });
+            const response = await api.get(auth.profile);
 
             return response.data.data.result;
         },

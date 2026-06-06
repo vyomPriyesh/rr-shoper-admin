@@ -8,15 +8,17 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { userState } from './context/UserContext'
 import Admin from './panels/admin'
 import ProtectedRoute from './utils/ProtectedRoute'
+import Loader from './utils/Loader'
 
 function App() {
 
-  const { user } = userState();
+  const { user, loading } = userState();
 
   const [count, setCount] = useState(0);
 
   return (
     <>
+      {/* {loading && <Loader />} */}
       <Routes>
         <Route path='/' element={user?.role ? <Navigate to={`/dashboard`} /> : <Login />} />
         <Route

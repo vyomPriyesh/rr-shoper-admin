@@ -9,6 +9,7 @@ const CommanModal = ({ open, onClose, onDone, title, children }) => {
             closable={{ 'aria-label': 'Custom Close Button' }}
             title={title}
             centered
+            onCancel={onClose}
             footer={[
                 <div className='flex flex-row gap-3 justify-end'>
                     <ButtonUi type='button' onClick={onClose} text='Cancel' alterNate />
