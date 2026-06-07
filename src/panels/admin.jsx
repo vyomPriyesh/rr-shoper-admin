@@ -5,7 +5,8 @@ import { LuLayoutDashboard } from 'react-icons/lu';
 import { GiPlatform } from 'react-icons/gi';
 import Platforms from '../pages/Platforms';
 import { Route, Routes } from 'react-router-dom';
-
+import { TbPackages } from "react-icons/tb";
+import Packages from '../pages/Packages';
 
 const Admin = ({ role }) => {
 
@@ -23,6 +24,10 @@ const Admin = ({ role }) => {
         {
             name: 'Platforms', to: 'platforms', role: role,
             icon: GiPlatform
+        },
+        {
+            name: 'Packages', to: 'packages', role: role,
+            icon: TbPackages
         },
     ]
 
@@ -45,10 +50,10 @@ const Admin = ({ role }) => {
                         links={links}
                     />
                 </div>
-                 <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5">
+                <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5">
                     <Routes>
                         <Route path="platforms" element={<Platforms />} />
-                        
+                        <Route path="packages" element={<Packages />} />
                     </Routes>
                 </div>
             </div>

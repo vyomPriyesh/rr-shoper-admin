@@ -1,10 +1,14 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useIsFetching, useIsMutating } from "@tanstack/react-query";
+import { useIsFetching, useIsMutating, useQuery } from "@tanstack/react-query";
+import api from "../config/api";
+import apiList from "../config/apiList";
 
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+
+    const { allOptions } = apiList();
 
     const isFetching = useIsFetching();
     const isMutating = useIsMutating();
@@ -26,10 +30,12 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem("user");
     };
 
-
+    const { data: { data: { data: options = {} } = {} } = {} } = useQuery({
+        queryFn: () => api.get(allOptions.get)
+    })
 
     return (
-        <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading }}>
+        <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading, options }}>
             {children}
         </UserContext.Provider>
     );

@@ -4,7 +4,7 @@ import ButtonUi from './ButtonUi'
 import { MdOutlineEdit, MdRemoveRedEye } from 'react-icons/md'
 import { RiDeleteBin6Line } from 'react-icons/ri'
 
-const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick }) => {
+const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, ...rest }) => {
 
     const actionColumn = () => {
         return {
@@ -27,7 +27,31 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick }) =
         }
     }
 
-    return <Table className='capitalize' columns={action ? [...columns, actionColumn()] : columns} dataSource={data} />
+    const handleTableChange = (data) => {
+        handlePagination({
+            page: data.current,
+            limit: data.pageSize
+        })
+    }
+
+    return <Table
+        className='capitalize'
+        columns={action ? [...columns, actionColumn()] : columns}
+        dataSource={data}
+        rowKey="_id"
+        pagination={pagination?.total > 10 &&
+        {
+            current: pagination.page,
+            pageSize: pagination.limit,
+            total: pagination.total,
+            showSizeChanger: showSizeChanger,
+            pageSizeOptions: ["5", "10", "20", "50"],
+            showTotal: (total, range) =>
+                `${range[0]}-${range[1]} of ${total} items`,
+        }}
+        onChange={handleTableChange}
+        {...rest}
+    />
 }
 
 export default TableUi

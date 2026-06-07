@@ -2,7 +2,7 @@ import { Modal } from 'antd'
 import React from 'react'
 import ButtonUi from './ButtonUi'
 
-const CommanModal = ({ open, onClose, onDone, title, children }) => {
+const CommanModal = ({ open, onClose, onDone, title, children, ...rest }) => {
     return (
         <Modal
             open={open}
@@ -16,6 +16,7 @@ const CommanModal = ({ open, onClose, onDone, title, children }) => {
                     <ButtonUi type='submit' onClick={onDone} text='Done' />
                 </div>
             ]}
+            {...rest}
         >
             <div className="py-3">
                 {children}

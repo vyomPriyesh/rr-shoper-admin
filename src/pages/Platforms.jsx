@@ -14,7 +14,7 @@ const Platforms = () => {
 
     const { platforms, images } = apiList();
     const { showToast } = useToast();
-    const { user } = userState();
+    const { user, loading } = userState();
 
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
@@ -86,9 +86,9 @@ const Platforms = () => {
         },
         {
             title: 'Status',
-            dataIndex: 'c',
+            dataIndex: 'status',
             key: 'status',
-            render: (_, record) => <Switch checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+            render: (_, record) => <Switch loading={loading} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
         },
     ];
 
@@ -107,16 +107,17 @@ const Platforms = () => {
             images: imagesData
         })
     }
-
     return (
         <div className='flex flex-col gap-5'>
             <PageTitleAddbtn title='Platforms' add addClick={onCloseModal} />
             <TableUi
                 columns={columns}
                 data={allPlatforms?.data}
+                pagination={allPlatforms?.pagination}
                 action
                 editClick={handleEdit}
                 deleteClick={handleDelete}
+                handlePagination={setPagination}
             />
             <CommanModal title='Add Platform' open={isOpenAddModal} onDone={handleAddPlatform} onClose={() => setIsOpenAddModal(!isOpenAddModal)}>
                 <Form form={form}>
