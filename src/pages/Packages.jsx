@@ -18,7 +18,7 @@ const Packages = () => {
 
     const { packages, images } = apiList();
     const { showToast } = useToast();
-    const { user, options, loading } = userState();
+    const { user, options } = userState();
 
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
@@ -32,7 +32,7 @@ const Packages = () => {
     }
 
     const { data: { data: allPlatforms = [] } = {}, refetch: allPackagesRefetch } = useQuery({
-        queryKey: [pagination, user],
+        queryKey: ['all-packages', pagination, user],
         queryFn: () => api.post(packages.all, pagination),
         enabled: !!user,
         select: ({ data }) => data
@@ -103,12 +103,15 @@ const Packages = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (_, record) => <Switch loading={loading} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+            render: (_, record) => <Switch loading={isPending && record?._id == editId} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
         },
     ];
 
-    const { mutate: changeStatus } = useMutation({
-        mutationFn: (id) => api.get(packages.statusUpdate(id)),
+    const { mutate: changeStatus, isPending } = useMutation({
+        mutationFn: (id) => {
+            setEditId(id)
+            return api.get(packages.statusUpdate(id))
+        },
         onSuccess: ({ data }) => {
             showToast(data.message, "success");
             allPackagesRefetch()

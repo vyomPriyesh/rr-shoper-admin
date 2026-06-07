@@ -14,7 +14,7 @@ const Platforms = () => {
 
     const { platforms, images } = apiList();
     const { showToast } = useToast();
-    const { user, loading } = userState();
+    const { user } = userState();
 
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
@@ -28,7 +28,7 @@ const Platforms = () => {
     }
 
     const { data: { data: allPlatforms = [] } = {}, refetch: allPlatformsRefetch } = useQuery({
-        queryKey: [pagination, user],
+        queryKey: ['all-platforms', pagination, user],
         queryFn: () => api.post(platforms.all, pagination),
         enabled: !!user,
         select: ({ data }) => data
@@ -53,8 +53,11 @@ const Platforms = () => {
     })
 
 
-    const { mutate: changeStatus } = useMutation({
-        mutationFn: (id) => api.get(platforms.statusUpdate(id)),
+    const { mutate: changeStatus, isPending } = useMutation({
+        mutationFn: (id) => {
+            setEditId(id)
+            return api.get(platforms.statusUpdate(id))
+        },
         onSuccess: ({ data }) => {
             showToast(data.message, "success");
             allPlatformsRefetch()
@@ -88,7 +91,7 @@ const Platforms = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (_, record) => <Switch loading={loading} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+            render: (_, record) => <Switch loading={isPending && record?._id == editId} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
         },
     ];
 
