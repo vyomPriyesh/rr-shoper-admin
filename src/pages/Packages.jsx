@@ -56,6 +56,52 @@ const Packages = () => {
         }
     })
 
+    const { mutate: changeStatus, isPending: statusPending } = useMutation({
+        mutationFn: (id) => {
+            setEditId(id)
+            return api.get(packages.statusUpdate(id))
+        },
+        onSuccess: ({ data }) => {
+            showToast(data.message, "success");
+            allPackagesRefetch()
+        }
+    })
+
+    const { mutate: changePopular, isPending: popularPending } = useMutation({
+        mutationFn: (id) => {
+            setEditId(id)
+            return api.get(packages.updatePopularPackage(id))
+        },
+        onSuccess: ({ data }) => {
+            showToast(data.message, "success");
+            allPackagesRefetch()
+        },
+        onError: ({response}) => {
+            const message = response.data.error.error_message
+            showToast(message, "warning");
+
+        }
+    })
+
+    const { mutate: handleDelete } = useMutation({
+        mutationFn: ({ _id }) => api.delete(packages.deletePackage(_id)),
+        onSuccess: ({ data }) => {
+            showToast(data.message, "success");
+            allPackagesRefetch()
+        }
+    })
+
+    const handleEdit = (data) => {
+        setEditId(data._id)
+        onCloseModal()
+        form.setFieldsValue({
+            platform: data.platform?._id,
+            name: data.name,
+            price: data.price,
+            services: data.services,
+        })
+    }
+
     const columns = [
         {
             title: 'Platform',
@@ -103,39 +149,15 @@ const Packages = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (_, record) => <Switch loading={isPending && record?._id == editId} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+            render: (_, record) => <Switch loading={statusPending && record?._id == editId} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+        },
+        {
+            title: 'Popular',
+            dataIndex: 'popular',
+            key: 'popular',
+            render: (_, record) => <Switch loading={popularPending && record?._id == editId} checkedChildren="Popular" unCheckedChildren="Not Popular" checked={record?.popular} onChange={() => changePopular(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
         },
     ];
-
-    const { mutate: changeStatus, isPending } = useMutation({
-        mutationFn: (id) => {
-            setEditId(id)
-            return api.get(packages.statusUpdate(id))
-        },
-        onSuccess: ({ data }) => {
-            showToast(data.message, "success");
-            allPackagesRefetch()
-        }
-    })
-
-    const { mutate: handleDelete } = useMutation({
-        mutationFn: ({ _id }) => api.delete(packages.deletePackage(_id)),
-        onSuccess: ({ data }) => {
-            showToast(data.message, "success");
-            allPackagesRefetch()
-        }
-    })
-
-    const handleEdit = (data) => {
-        setEditId(data._id)
-        onCloseModal()
-        form.setFieldsValue({
-            platform: data.platform?._id,
-            name: data.name,
-            price: data.price,
-            services: data.services,
-        })
-    }
 
     return (
         <div className='flex flex-col gap-5'>

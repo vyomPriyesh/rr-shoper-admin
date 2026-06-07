@@ -27,6 +27,7 @@ const apiList = () => {
             updatePackage: (id) => `packages/update-package/${id}`,
             statusUpdate: (id) => `packages/update-status/${id}`,
             deletePackage: (id) => `packages/delete-package/${id}`,
+            updatePopularPackage: (id) => `packages/update-popular-package/${id}`,
         },
     }
 }
