@@ -30,30 +30,27 @@ const AddUpdateDesignation = ({ links }) => {
 
     // Memoize computed rowData structure
     const computedRowData = useMemo(() => {
-        if (designationData && links) {
-            return links.map((list, index) => ({
+        const permissionMap = new Map(
+            (designationData?.permissions || []).map((permission) => [
+                permission.module_name,
+                permission.actions,
+            ])
+        );
+
+        return (links || []).map((list, index) => {
+            const actions = permissionMap.get(list.name);
+
+            return {
                 key: index,
                 module_name: list.name,
                 actions: {
-                    view: designationData?.permissions?.[index]?.actions?.view || false,
-                    add: designationData?.permissions?.[index]?.actions?.add || false,
-                    update: designationData?.permissions?.[index]?.actions?.update || false,
-                    delete: designationData?.permissions?.[index]?.actions?.delete || false,
-                }
-            }));
-        } else if (links) {
-            return links.map((list, index) => ({
-                key: index,
-                module_name: list.name,
-                actions: {
-                    view: false,
-                    add: false,
-                    update: false,
-                    delete: false,
-                }
-            }));
-        }
-        return [];
+                    view: actions?.view || false,
+                    add: actions?.add || false,
+                    update: actions?.update || false,
+                    delete: actions?.delete || false,
+                },
+            };
+        });
     }, [designationData, links]);
 
     // Sync computed rowData to state
