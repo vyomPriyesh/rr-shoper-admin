@@ -7,7 +7,7 @@ import Login from './pages/Login'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { userState } from './context/UserContext'
 import Admin from './panels/admin'
-import ProtectedRoute from './utils/ProtectedRoute'
+import ProtectedRoute from './protecttedRoute/ProtectedRoute'
 import Loader from './utils/Loader'
 
 function App() {
@@ -24,8 +24,8 @@ function App() {
         <Route
           path="/*"
           element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <Admin role='admin' />
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <Admin role={user?.role} />
             </ProtectedRoute>
           }
         />

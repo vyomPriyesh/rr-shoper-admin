@@ -28,7 +28,7 @@ const Platforms = () => {
     }
 
     const { data: { data: allPlatforms = [] } = {}, refetch: allPlatformsRefetch } = useQuery({
-        queryKey: ['all-platforms', pagination, user],
+        queryKey: ['all-platforms', pagination],
         queryFn: () => api.post(platforms.all, pagination),
         enabled: !!user,
         select: ({ data }) => data

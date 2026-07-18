@@ -3,7 +3,7 @@ import PageTitleAddbtn from '../utils/PageTitleAddbtn'
 import apiList from '../config/apiList';
 import { useToast } from '../context/ToastContext';
 import { userState } from '../context/UserContext';
-import { Form, Image, Popover, Switch } from 'antd';
+import { Form, Image, Popover } from 'antd';
 import CommanModal from '../utils/CommanModal';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../config/api';
@@ -32,7 +32,7 @@ const Packages = () => {
     }
 
     const { data: { data: allPlatforms = [] } = {}, refetch: allPackagesRefetch } = useQuery({
-        queryKey: ['all-packages', pagination, user],
+        queryKey: ['all-packages', pagination],
         queryFn: () => api.post(packages.all, pagination),
         enabled: !!user,
         select: ({ data }) => data
@@ -76,7 +76,7 @@ const Packages = () => {
             showToast(data.message, "success");
             allPackagesRefetch()
         },
-        onError: ({response}) => {
+        onError: ({ response }) => {
             const message = response.data.error.error_message
             showToast(message, "warning");
 
@@ -149,13 +149,13 @@ const Packages = () => {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (_, record) => <Switch loading={statusPending && record?._id == editId} checkedChildren="Active" unCheckedChildren="Unactive" checked={record?.status} onChange={() => changeStatus(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+            render: (_, record) => <InputField type='switch' loading={statusPending && record?._id == editId} checked={record?.status} onChange={() => changeStatus(record?._id)} />
         },
         {
             title: 'Popular',
             dataIndex: 'popular',
             key: 'popular',
-            render: (_, record) => <Switch loading={popularPending && record?._id == editId} checkedChildren="Popular" unCheckedChildren="Not Popular" checked={record?.popular} onChange={() => changePopular(record?._id)} size="medium" className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' />
+            render: (_, record) => <InputField type='switch' loading={popularPending && record?._id == editId} checkedChildren="Popular" unCheckedChildren="Not Popular" checked={record?.popular} onChange={() => changePopular(record?._id)} />
         },
     ];
 

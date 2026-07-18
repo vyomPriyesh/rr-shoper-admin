@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import Loader from './Loader';
+import Loader from '../utils/Loader';
 import { userState } from '../context/UserContext';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { NavLink } from 'react-router-dom'
 import { MdLogout } from 'react-icons/md';
 import { userState } from '../context/UserContext';
@@ -19,7 +19,7 @@ const Sidebar = ({ isExpanded, toggleMenu, links }) => {
                     key={index}
                     onClick={change}
                     className={({ isActive }) =>
-                        `${isActive || (list.to === '/dashboard' && window.location.pathname === `/${user?.role}`) ? 'bg-primary font-semibold text-white' : 'hover:bg-primary hover:text-white'} 
+                        `${isActive || window.location.pathname.startsWith(`/${list.to.split("/")[0]}`) || (list.to === '/dashboard' && window.location.pathname === `/${user?.role}`) ? 'bg-primary font-semibold text-white' : 'hover:bg-primary hover:text-white'} 
                          ${isExpanded ? 'lg:justify-center' : ''} flex flex-row gap-3 rounded-md px-3 py-2 transition duration-300 ease-in-out`
                     }
                 >

@@ -5,31 +5,52 @@ import { LuLayoutDashboard } from 'react-icons/lu';
 import { GiPlatform } from 'react-icons/gi';
 import Platforms from '../pages/Platforms';
 import { Route, Routes } from 'react-router-dom';
-import { TbPackages } from "react-icons/tb";
+import { TbPackages, TbUsersGroup } from "react-icons/tb";
 import Packages from '../pages/Packages';
+import Users from '../pages/Users';
+import { SiCodesignal } from 'react-icons/si';
+import Designation from '../pages/DesignationPages/Designation';
+import AddUpdateDesignation from '../pages/DesignationPages/AddUpdateDesignation';
+import { userState } from '../context/UserContext';
+import CanAccessRoute from '../protecttedRoute/CanAccessRoute';
 
 const Admin = ({ role }) => {
 
+    const { designation, user } = userState()
     const [isExpanded, setIsExpanded] = useState(false);
 
     const toggleMenu = () => {
         setIsExpanded(!isExpanded);
     };
 
-    const links = [
+    const allLinks = [
         {
             name: "Dashboards", to: "dashboard", role: role,
             icon: LuLayoutDashboard
         },
         {
-            name: 'Platforms', to: 'platforms', role: role,
+            name: 'Platforms', to: 'platforms/view', role: role,
             icon: GiPlatform
         },
         {
-            name: 'Packages', to: 'packages', role: role,
+            name: 'Packages', to: 'packages/view', role: role,
             icon: TbPackages
         },
+        {
+            name: 'Users', to: 'users/view', role: role,
+            icon: TbUsersGroup
+        },
+        {
+            name: 'Designation', to: 'designation/view', role: role,
+            icon: SiCodesignal
+        },
     ]
+
+    const links = allLinks.filter(link => {
+        if (user?.role === 'admin') return true;
+        const permissionModuleNames = designation?.permissions?.map(p => p.module_name) || [];
+        return permissionModuleNames.includes(link.name);
+    });
 
     return (
         <div>
@@ -52,8 +73,14 @@ const Admin = ({ role }) => {
                 </div>
                 <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5">
                     <Routes>
-                        <Route path="platforms" element={<Platforms />} />
-                        <Route path="packages" element={<Packages />} />
+                        <Route path="platforms/view" element={<Platforms />} />
+                        <Route path="packages/view" element={<Packages />} />
+                        <Route path="users/view" element={<Users />} />
+                        <Route element={<CanAccessRoute module_name="Designation" />}>
+                            <Route path="designation/view" element={<Designation />} />
+                            <Route path="designation/add" element={<AddUpdateDesignation links={links} />} />
+                            <Route path="designation/update/:id" element={<AddUpdateDesignation links={links} />} />
+                        </Route>
                     </Routes>
                 </div>
             </div>

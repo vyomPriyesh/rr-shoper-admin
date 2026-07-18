@@ -6,7 +6,22 @@ const apiList = () => {
         },
 
         allOptions: {
-            get: 'all-options',
+            get: 'admin-all-options',
+        },
+
+        users: {
+            all: 'allUsers',
+            updateRole: (id, role) => `users/update-role/${id}/${role}`,
+            updateDesignation: (id, designation) => `users/update-designation/${id}/${designation}`,
+            statusUpdate: (id) => `users/update-status/${id}`,
+        },
+
+        designations: {
+            all: 'allDesignation',
+            add: 'designation/add-designation',
+            updateDesignation: (id) => `designation/update-designation/${id}`,
+            updateStatus: (id) => `designation/update-status/${id}`,
+            getDesignation: (id) => `designation/${id}`,
         },
 
         images: {

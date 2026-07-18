@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 
 const Navbar = ({ toggleMenu }) => {
 
-    const { user, logout, setUser } = userState();
+    const { user, logout, setUser, setDesignation } = userState();
     const { showToast } = useToast();
     const { auth } = apiList()
 
@@ -34,6 +34,7 @@ const Navbar = ({ toggleMenu }) => {
             }
         } else {
             if (profileData) {
+                setDesignation(profileData?.designation)
                 const newProdileData = {
                     ...user,
                     ...profileData

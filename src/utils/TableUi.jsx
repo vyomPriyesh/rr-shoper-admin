@@ -3,8 +3,20 @@ import React from 'react'
 import ButtonUi from './ButtonUi'
 import { MdOutlineEdit, MdRemoveRedEye } from 'react-icons/md'
 import { RiDeleteBin6Line } from 'react-icons/ri'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, ...rest }) => {
+const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, callBack, ...rest }) => {
+
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
+
+    const handleRowAction = (type, click, data) => {
+        if (callBack) {
+            click(data)
+        } else {
+            navigate(`${click}/${data._id}`, { state: { from: pathname } })
+        }
+    }
 
     const actionColumn = () => {
         return {
@@ -12,8 +24,8 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
             dataIndex: 'action',
             key: 'action',
             render: (_, record) => <div className="flex flex-row gap-4">
-                {editClick && <ButtonUi onClick={() => editClick(record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
-                {viewClick && <ButtonUi onClick={() => viewClick(record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<MdRemoveRedEye />} />}
+                {editClick && <ButtonUi onClick={() => handleRowAction('edit', editClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
+                {viewClick && <ButtonUi onClick={() => handleRowAction('view', viewClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<MdRemoveRedEye />} />}
                 {deleteClick &&
                     <Popconfirm title="Delete Platform" description="Are you sure to delete this Platform?" onConfirm={() => deleteClick(record)}>
                         <ButtonUi

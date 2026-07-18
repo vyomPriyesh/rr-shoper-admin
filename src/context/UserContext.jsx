@@ -17,6 +17,7 @@ export const UserProvider = ({ children }) => {
 
     const [user, setUser] = useState(null);
     const [refresh, setRefresh] = useState(0);
+    const [designation, setDesignation] = useState(null);
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -35,7 +36,7 @@ export const UserProvider = ({ children }) => {
     })
 
     return (
-        <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading, options }}>
+        <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading, options, designation, setDesignation }}>
             {children}
         </UserContext.Provider>
     );

@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from "react";
-import { FaCheckCircle, FaTimesCircle, FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
+import { createContext, useContext, useRef, useState } from "react";
+import { FaCheckCircle, FaTimesCircle, FaInfoCircle, FaExclamationTriangle, FaTimes } from "react-icons/fa";
 
 const ToastContext = createContext();
 
@@ -7,9 +7,15 @@ export const useToast = () => useContext(ToastContext);
 
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
+    const idRef = useRef(0);
+
+    const removeToast = (id) => {
+        setToasts((prev) => prev.filter(t => t.id !== id));
+    };
+
 
     const showToast = (message, type = "success") => {
-        const id = Date.now();
+        const id = ++idRef.current;
 
         setToasts((prev) => [...prev, { id, message, type }]);
 
@@ -39,6 +45,12 @@ export const ToastProvider = ({ children }) => {
                         <span className="flex-1">
                             {t.message}
                         </span>
+                        <button
+                            onClick={() => removeToast(t.id)}
+                            className="text-white/80 hover:text-white transition-colors"
+                        >
+                            <FaTimes size={14} />
+                        </button>
                     </div>
                 ))}
             </div>

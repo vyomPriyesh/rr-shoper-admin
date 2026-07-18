@@ -1,6 +1,6 @@
 // components/common/InputField.jsx
 
-import { Image, Input, Select, Upload } from 'antd'
+import { Image, Input, Select, Switch, Upload } from 'antd'
 import React, { useEffect, useRef, useState } from 'react'
 import { IoChevronDown } from 'react-icons/io5'
 import { LuEye } from 'react-icons/lu';
@@ -76,7 +76,7 @@ const InputField = (props) => {
             )}
 
             {/* ================= INPUT ================= */}
-            {type !== "textarea" &&
+            {type !== "textarea" && type !== 'switch' &&
                 type !== "drop-single-select" &&
                 type !== "drop-multi-select" &&
                 type !== "password" && type !== 'upload' && (
@@ -330,6 +330,17 @@ const InputField = (props) => {
                 </>
             )
             }
+
+            {type === 'switch' && (
+                <Switch
+                    loading={rest.loading}
+                    checkedChildren={rest.checkedChildren ?? "Active"}
+                    unCheckedChildren={rest.unCheckedChildren ?? "Unactive"}
+                    checked={rest.checked}
+                    onChange={onChange}
+                    size={rest.size ?? "medium"}
+                    className={className || 'bg-gray-300 [&.ant-switch-checked]:!bg-primary'} {...rest} />
+            )}
         </div>
     )
 }
