@@ -118,6 +118,8 @@ const Platforms = () => {
                 data={allPlatforms?.data}
                 pagination={allPlatforms?.pagination}
                 action
+                callBack
+                module_name='Platforms'
                 editClick={handleEdit}
                 deleteClick={handleDelete}
                 handlePagination={setPagination}

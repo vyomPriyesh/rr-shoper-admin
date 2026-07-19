@@ -64,6 +64,7 @@ const Designation = () => {
         <div className='flex flex-col gap-5'>
             <PageTitleAddbtn title='Designation' add addClick={handleAdd} />
             <TableUi
+                module_name='Designation'
                 columns={columns}
                 data={allDesignations?.data}
                 pagination={allDesignations?.pagination}

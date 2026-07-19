@@ -167,6 +167,8 @@ const Packages = () => {
                 data={allPlatforms?.data}
                 pagination={allPlatforms?.pagination}
                 action
+                callBack
+                module_name='Packages'
                 editClick={handleEdit}
                 deleteClick={handleDelete}
                 handlePagination={setPagination}

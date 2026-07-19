@@ -73,9 +73,15 @@ const Admin = ({ role }) => {
                 </div>
                 <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5">
                     <Routes>
-                        <Route path="platforms/view" element={<Platforms />} />
-                        <Route path="packages/view" element={<Packages />} />
-                        <Route path="users/view" element={<Users />} />
+                        <Route element={<CanAccessRoute module_name="Platforms" />}>
+                            <Route path="platforms/view" element={<Platforms />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Packages" />}>
+                            <Route path="packages/view" element={<Packages />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Users" />}>
+                            <Route path="users/view" element={<Users />} />
+                        </Route>
                         <Route element={<CanAccessRoute module_name="Designation" />}>
                             <Route path="designation/view" element={<Designation />} />
                             <Route path="designation/add" element={<AddUpdateDesignation links={links} />} />

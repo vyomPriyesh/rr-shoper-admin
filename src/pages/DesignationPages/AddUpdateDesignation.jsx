@@ -13,15 +13,20 @@ const AddUpdateDesignation = ({ links }) => {
 
     const { showToast } = useToast();
     const { designations } = apiList();
-    const { user } = userState();
+    const { user, options } = userState();
+
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const [designationName, setDesignationName] = useState(null)
+    const [designationPayload, setDesignationPayload] = useState({
+        name: "",
+        platform: null,
+    })
     const [rowData, setRowData] = useState([])
+    const [haveChanges, setHaveChanges] = useState(false)
 
     // Fetch designation data if editing
-    const { data: designationData } = useQuery({
+    const { data: designationData, isFetching: designationFetching } = useQuery({
         queryKey: ['designation-edit', id],
         queryFn: () => api.get(designations.getDesignation(id)),
         enabled: !!id && !!user,
@@ -58,14 +63,26 @@ const AddUpdateDesignation = ({ links }) => {
         setRowData(computedRowData);
     }, [computedRowData]);
 
-    // Populate designation name when editing
+    // Populate designation data when editing
     useEffect(() => {
         if (designationData) {
-            setDesignationName(designationData?.name)
+            setDesignationPayload({
+                name: designationData?.name || "",
+                platform: designationData?.platform || designationData?.platform_id || null,
+            })
         }
     }, [designationData]);
 
+    const handleDesignationFieldChange = useCallback((field, value) => {
+        setHaveChanges(true);
+        setDesignationPayload((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    }, []);
+
     const handlePermissionChange = useCallback((rowIndex, field, checked) => {
+        setHaveChanges(true);
         setRowData((prev) =>
             prev.map((row, index) =>
                 index === rowIndex
@@ -169,8 +186,12 @@ const AddUpdateDesignation = ({ links }) => {
     })
 
     const validationErrors = useMemo(() => {
-        if (!designationName) {
+        if (!designationPayload?.name?.trim()) {
             return { valid: false, error: 'Please Enter Designation Name' };
+        }
+
+        if (!designationPayload?.platform) {
+            return { valid: false, error: 'Please Select Platform' };
         }
 
         const hasPermission = rowData.some((row) =>
@@ -191,7 +212,7 @@ const AddUpdateDesignation = ({ links }) => {
         }
 
         return { valid: true };
-    }, [designationName, rowData]);
+    }, [designationPayload, rowData]);
 
     const handleSave = useCallback(() => {
         if (!validationErrors.valid) {
@@ -200,19 +221,23 @@ const AddUpdateDesignation = ({ links }) => {
         }
 
         const payload = {
-            name: designationName.toLowerCase(),
+            name: designationPayload?.name?.toLowerCase(),
+            platform: designationPayload?.platform,
             permissions: rowData.filter((row) =>
                 Object.values(row.actions).some((value) => value)
             ),
         }
         addDesignation(payload)
-    }, [validationErrors, designationName, rowData, showToast, addDesignation]);
+    }, [validationErrors, designationPayload, rowData, showToast, addDesignation]);
 
     return (
         <div className="flex flex-col gap-5">
-            <PageTitleAddbtn title={id ? "Edit Designation" : "Add Designation"} add addText='Save' addClick={handleSave} />
-            <InputField className='!w-60 capitalize' placeholder='Enter Designation Name' value={designationName} onChange={(e) => setDesignationName(e.target.value)} />
-            <TableUi columns={columns} data={rowData} />
+            <PageTitleAddbtn title={id ? "Edit Designation" : "Add Designation"} add addText='Save' addClick={handleSave} disabled={!haveChanges} />
+            <div className="flex flex-row gap-5">
+                <InputField className='capitalize' placeholder='Enter Designation Name' value={designationPayload?.name || ""} onChange={(e) => handleDesignationFieldChange("name", e.target.value)} disabled={id && designationFetching} />
+                <InputField className='capitalize' placeholder='Select Platform' type='drop-single-select' options={options.platforms} value={designationPayload?.platform || undefined} onChange={(value) => handleDesignationFieldChange("platform", value)} disabled={id && designationFetching} />
+            </div>
+            <TableUi columns={columns} data={rowData} gridLoading={id && designationFetching} />
         </div>
     );
 };

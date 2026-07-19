@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 
 const Navbar = ({ toggleMenu }) => {
 
-    const { user, logout, setUser, setDesignation } = userState();
+    const { user, logout, setUser, designation, setDesignation } = userState();
     const { showToast } = useToast();
     const { auth } = apiList()
 
@@ -52,7 +52,10 @@ const Navbar = ({ toggleMenu }) => {
                     <button onClick={toggleMenu} className="text-2xl">
                         <FiMenu />
                     </button>
-                    <Link to={`/${user?.role}`} className='text-2xl font-semibold mb-1 capitalize'>{user?.name}</Link>
+                    <div className="flex flex-col">
+                        <Link to={`/dashboard`} className='text-2xl font-semibold capitalize'>{user?.name}</Link>
+                        <span className='text-sm text-gray-500 capitalize'>{user?.role == 'admin' ? 'Administrator' : designation?.name}</span>
+                    </div>
                 </div>
                 <div className="flex items-center gap-10">
 

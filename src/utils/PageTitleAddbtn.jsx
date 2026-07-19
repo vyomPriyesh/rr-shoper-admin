@@ -6,7 +6,7 @@ const PageTitleAddbtn = ({ title, add, addClick, addText, ...rest }) => {
         <div className="flex justify-between gap-5">
             <h2 className='text-xl font-semibold'>{title}</h2>
             {add &&
-                <ButtonUi text={addText || 'Add'} onClick={addClick} type={rest.type} />
+                <ButtonUi text={addText || 'Add'} disabled={rest.disabled} onClick={addClick} type={rest.type} />
             }
         </div>
     )

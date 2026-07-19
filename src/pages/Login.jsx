@@ -28,6 +28,9 @@ const Login = () => {
             localStorage.setItem("user", JSON.stringify({
                 ...data.result,
             }));
+        },
+        onError: ({ response }) => {
+            showToast(response?.data?.error?.error_message || "Login failed", "error");
         }
     })
 
