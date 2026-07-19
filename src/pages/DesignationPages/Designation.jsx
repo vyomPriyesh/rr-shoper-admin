@@ -14,21 +14,23 @@ const Designation = () => {
     const navigate = useNavigate()
     const { designations } = apiList()
     const { showToast } = useToast()
-    const { user } = userState()
+    const { user, hasPermission } = userState()
 
     const [pagination, setPagination] = useState({ page: 1, limit: 10 })
     const [editId, setEditId] = useState(null)
 
     const handleAdd = () => {
-        navigate('/designation/add')
+        const canAdd = hasPermission('Designation', true, false, 'add')
+        if (canAdd) {
+            navigate('/designation/add')
+        }
     }
 
-    const { data: { data: allDesignations = [] } = {}, refetch: allDesignationsRefetch } = useQuery({
+    const { data: { data: allDesignations = [] } = {}, refetch: allDesignationsRefetch, isFetching: isDesignationsFetching } = useQuery({
         queryKey: ['all-designations', pagination],
         queryFn: () => api.post(designations.all, pagination),
         enabled: !!user,
         select: ({ data }) => data,
-        refetchOnMount:true,
     })
 
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
@@ -41,10 +43,6 @@ const Designation = () => {
             allDesignationsRefetch()
         }
     })
-
-    const handleEdit = (data) => {
-        navigate(`/designation/update/${data._id}`)
-    }
 
     const columns = [
         {
@@ -68,6 +66,7 @@ const Designation = () => {
                 columns={columns}
                 data={allDesignations?.data}
                 pagination={allDesignations?.pagination}
+                gridLoading={isDesignationsFetching}
                 action
                 editClick='/designation/update'
                 handlePagination={setPagination}

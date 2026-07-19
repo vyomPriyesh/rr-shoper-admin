@@ -13,6 +13,11 @@ import Designation from '../pages/DesignationPages/Designation';
 import AddUpdateDesignation from '../pages/DesignationPages/AddUpdateDesignation';
 import { userState } from '../context/UserContext';
 import CanAccessRoute from '../protecttedRoute/CanAccessRoute';
+import { MdOutlineSubtitles } from 'react-icons/md';
+import TicketsTitle from '../pages/TicketsPages/TicketsTitle';
+import TicketForms from '../pages/TicketsPages/TicketForms';
+import AddUpdateTicketForm from '../pages/TicketsPages/AddUpdateTicketForm';
+import { FaWpforms } from 'react-icons/fa';
 
 const Admin = ({ role }) => {
 
@@ -44,6 +49,14 @@ const Admin = ({ role }) => {
             name: 'Designation', to: 'designation/view', role: role,
             icon: SiCodesignal
         },
+        {
+            name: 'Tickets Title', to: 'tickets-title/view', role: role,
+            icon: MdOutlineSubtitles
+        },
+        {
+            name: 'Tickets Forms', to: 'tickets-forms/view', role: role,
+            icon: FaWpforms
+        }
     ]
 
     const links = allLinks.filter(link => {
@@ -62,7 +75,7 @@ const Admin = ({ role }) => {
                     onClick={toggleMenu}
                 ></div>
                 <div
-                    className={`z-50 px-5 pb-5 fixed lg:static overflow-hidden transition-all duration-300 ease-in-out h-full ${isExpanded ? "translate-x-0 w-64 lg:w-28" : "lg:translate-x-0 -translate-x-full w-64 lg:w-1/6"
+                    className={`z-50 px-5 pb-5 fixed lg:static overflow-hidden transition-all duration-300 ease-in-out h-full ${isExpanded ? "translate-x-0 w-72 lg:w-36" : "lg:translate-x-0 -translate-x-full w-72 lg:w-1/5"
                         }`}
                 >
                     <Sidebar
@@ -81,6 +94,14 @@ const Admin = ({ role }) => {
                         </Route>
                         <Route element={<CanAccessRoute module_name="Users" />}>
                             <Route path="users/view" element={<Users />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Tickets Title" />}>
+                            <Route path="tickets-title/view" element={<TicketsTitle />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Tickets Forms" />}>
+                            <Route path="tickets-forms/view" element={<TicketForms />} />
+                            <Route path="tickets-forms/add" element={<AddUpdateTicketForm />} />
+                            <Route path="tickets-forms/update/:id" element={<AddUpdateTicketForm />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Designation" />}>
                             <Route path="designation/view" element={<Designation />} />

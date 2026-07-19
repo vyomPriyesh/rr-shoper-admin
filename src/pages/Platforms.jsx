@@ -27,7 +27,7 @@ const Platforms = () => {
         form.resetFields()
     }
 
-    const { data: { data: allPlatforms = [] } = {}, refetch: allPlatformsRefetch } = useQuery({
+    const { data: { data: allPlatforms = [] } = {}, refetch: allPlatformsRefetch, isFetching: isAllPlatformsFetching } = useQuery({
         queryKey: ['all-platforms', pagination],
         queryFn: () => api.post(platforms.all, pagination),
         enabled: !!user,
@@ -120,6 +120,7 @@ const Platforms = () => {
                 action
                 callBack
                 module_name='Platforms'
+                gridLoading={isAllPlatformsFetching}
                 editClick={handleEdit}
                 deleteClick={handleDelete}
                 handlePagination={setPagination}

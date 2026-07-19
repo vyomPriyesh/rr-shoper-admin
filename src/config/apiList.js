@@ -19,6 +19,20 @@ const apiList = () => {
             statusUpdate: (id) => `users/update-status/${id}`,
         },
 
+        tickets:{
+            allTicketsTitle: 'allTicketsTitle',
+            addTicketsTitle: 'tickets-title/add-tickets-title',
+            updateTicketsTitle: (id) => `tickets-title/update-tickets-title/${id}`,
+            deleteTicketsTitle: (id) => `tickets-title/delete-tickets-title/${id}`,
+            statusUpdate: (id) => `tickets-title/update-status/${id}`,
+            allTicketForms: 'allTicketForm',
+            addTicketForm: 'ticket-form/add-ticket-form',
+            updateTicketForm: (id) => `ticket-form/update-ticket-form/${id}`,
+            updateTicketFormStatus: (id) => `ticket-form/update-status/${id}`,
+            deleteTicketForm: (id) => `ticket-form/delete-ticket-form/${id}`,
+            getTicketForm: (id) => `ticket-form/${id}`,
+        },
+
         designations: {
             all: 'allDesignation',
             add: 'designation/add-designation',

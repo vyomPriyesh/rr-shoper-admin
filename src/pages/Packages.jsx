@@ -31,7 +31,7 @@ const Packages = () => {
         form.resetFields()
     }
 
-    const { data: { data: allPlatforms = [] } = {}, refetch: allPackagesRefetch } = useQuery({
+    const { data: { data: allPlatforms = [] } = {}, refetch: allPackagesRefetch, isFetching: isAllPackagesFetching } = useQuery({
         queryKey: ['all-packages', pagination],
         queryFn: () => api.post(packages.all, pagination),
         enabled: !!user,
@@ -169,6 +169,7 @@ const Packages = () => {
                 action
                 callBack
                 module_name='Packages'
+                gridLoading={isAllPackagesFetching}
                 editClick={handleEdit}
                 deleteClick={handleDelete}
                 handlePagination={setPagination}

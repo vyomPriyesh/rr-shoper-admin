@@ -86,9 +86,9 @@ const InputField = (props) => {
                         value={value}
                         type={type}
                         {...rest}
-                        className={`!w-full !h-12 !rounded-lg !text-base
+                        className={`!w-full !h-10 !rounded-lg !text-base
               !border !border-borderColor
-              !px-5 !outline-none !bg-white
+              !px-3 !outline-none !bg-white
               !text-heading
               placeholder:!text-[#9CA3AF] focus-within:!border-primary hover:!border-primary
               !shadow-none ${className}`}
@@ -101,7 +101,7 @@ const InputField = (props) => {
                     onChange={onChange}
                     value={value}
                     {...rest}
-                    className={`!w-full !h-12 !rounded-lg !text-base
+                    className={`!w-full !h-10 !rounded-lg !text-base
             !border !border-borderColor
             !px-5 !outline-none !bg-white
             !text-heading
@@ -120,7 +120,7 @@ const InputField = (props) => {
                     placeholder={placeholder}
                     className="
                         w-full rounded-2xl border border-borderColor
-                        px-5 py-4 outline-none resize-none bg-white
+                        px-2 py-4 outline-none resize-none bg-white
                         text-heading
                         placeholder:text-[#9CA3AF]
                         transition-all duration-300
@@ -211,7 +211,7 @@ const InputField = (props) => {
                         value={value}
                         onChange={onChange}
                         placeholder={placeholder}
-                        className={`!shadow-none !outline-none !w-full !h-12 !rounded-lg !text-base hover:!border-primary  focus-within:!border-primary !capitalize`}
+                        className={`!shadow-none !outline-none !w-full !h-10 !rounded-lg !text-base hover:!border-primary  focus-within:!border-primary !capitalize`}
                         options={options?.map((item) => ({
                             ...item,
                             label:
