@@ -167,32 +167,55 @@ const AddUpdateTicketForm = () => {
                             </div>
                             {current.type === 'select' && (
                                 <div className='mt-4'>
-                                    <label className='mb-2 block'>Options</label>
-                                    {(current.options || []).map((option, index) => (
-                                        <div key={index} className='mb-2 flex gap-2'>
-                                            <Input value={option} onChange={(e) => updateOption(index, e.target.value)} />
-                                            <Button danger onClick={() => removeOption(index)}>✕</Button>
-                                        </div>
-                                    ))}
-                                    <Button block onClick={addOption}>Add Option</Button>
+                                    <div className='gap-5 flex flex-row text-nowrap items-center justify-between'>
+                                        <span>Multiple Select</span>
+                                        <InputField type='switch' checkedChildren={null} unCheckedChildren={null} checked={current.multipleSelect || false} onChange={(value) => update('multipleSelect', value)} />
+                                    </div>
+                                    <div className="flex flex-row mb-2 gap-5 text-nowrap w-full items-center">
+                                        <span>Manully Options</span>
+                                        <InputField type='switch' checkedChildren={null} unCheckedChildren={null} checked={current.manully || false} onChange={(value) => update('manully', value)} />
+                                        {!current.manully && <ButtonUi onClick={addOption} className='!px-3' text='Add Option' />}
+                                    </div>
+
+                                    {current.manully ?
+                                        <>
+                                            <InputField
+                                                type='drop-single-select'
+                                                placeholder='Select Option List'
+                                                value={current.dynamic}
+                                                onChange={(value) => update('dynamic', value)}
+                                                options={options?.optionsLists}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </>
+                                        :
+                                        <>
+                                            {(current.options || []).map((option, index) => (
+                                                <div key={index} className='mb-2 flex gap-2'>
+                                                    <Input value={option} onChange={(e) => updateOption(index, e.target.value)} />
+                                                    <Button danger onClick={() => removeOption(index)}>✕</Button>
+                                                </div>
+                                            ))}
+                                        </>
+                                    }
                                 </div>
                             )}
                             {current.type === 'upload' && (
                                 <div className="space-y-4">
-                                    <div className='mt-4'>
-                                        <label className='mb-2 block'>Upload Mode</label>
+                                    <div className='flex flex-row mb-2 gap-5 text-nowrap w-full items-center'>
+                                        <label className=''>Upload Multiple</label>
                                         <InputField
-                                            type='drop-single-select'
-                                            value={current.multiple ? 'multiple' : 'single'}
-                                            onChange={(value) => update('multiple', value === 'multiple')}
+                                            type='switch'
+                                            checked={current.multiple}
+                                            checkedChildren={null} unCheckedChildren={null}
+                                            onChange={(value) => update('multiple', value)}
                                             options={[
                                                 { value: 'single', label: 'Single File' },
                                                 { value: 'multiple', label: 'Multiple Files' },
                                             ]}
-                                            style={{ width: '100%' }}
                                         />
                                     </div>
-                                    <InputField value={current.imageLimit || ''} placeholder='Enter Image Limit' onChange={(e) => update('imageLimit', e.target.value)} />
+                                    {current.multiple && <InputField value={current.imageLimit || ''} placeholder='Enter Image Limit' onChange={(e) => update('imageLimit', e.target.value)} />}
                                 </div>
                             )}
                         </>

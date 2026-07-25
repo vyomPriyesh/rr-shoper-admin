@@ -49,13 +49,8 @@ export const UserProvider = ({ children }) => {
             (p) => p.module_name === module_name
         );
 
-        if (!permission) {
-            return <Loader />;
-        }
-
         const action = forAction ? forAction : pathname.split(module_name.toLowerCase())[1]?.split("/")[1];
-        const allowed = !!permission.actions?.[action];
-        
+        const allowed = !!permission?.actions?.[action];
         if (!allowed && showModal) {
             Swal.fire({
                 icon: "warning",

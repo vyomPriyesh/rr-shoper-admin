@@ -4,7 +4,7 @@ import Sidebar from '../layout/Sidebar';
 import { LuLayoutDashboard } from 'react-icons/lu';
 import { GiPlatform } from 'react-icons/gi';
 import Platforms from '../pages/Platforms';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { TbPackages, TbUsersGroup } from "react-icons/tb";
 import Packages from '../pages/Packages';
 import Users from '../pages/Users';
@@ -108,6 +108,7 @@ const Admin = ({ role }) => {
                             <Route path="designation/add" element={<AddUpdateDesignation links={links} />} />
                             <Route path="designation/update/:id" element={<AddUpdateDesignation links={links} />} />
                         </Route>
+                        <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>
                 </div>
             </div>

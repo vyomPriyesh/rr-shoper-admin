@@ -55,7 +55,7 @@ const TicketForms = () => {
             title: 'Ticket Title',
             dataIndex: 'ticketTitle',
             key: 'ticketTitle',
-            render: (_, { ticketTitle }) => <span className='capitalize'>{ticketTitle.title}</span>,
+            render: (_, { ticketTitle }) => <span className='capitalize'>{ticketTitle?.title}</span>,
         },
         {
             title: 'Status',
