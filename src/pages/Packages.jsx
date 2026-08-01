@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import PageTitleAddbtn from '../utils/PageTitleAddbtn'
 import apiList from '../config/apiList';
 import { useToast } from '../context/ToastContext';
@@ -18,13 +18,15 @@ const Packages = () => {
 
     const { packages, images } = apiList();
     const { showToast } = useToast();
-    const { user, options } = userState();
+    const { user, hasPermission, options } = userState();
 
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
     const [pagination, setPagination] = useState({ page: 1, limit: 10 })
     const [editId, setEditId] = useState(null)
+
+    const canAdd = useMemo(() => hasPermission('Packages', false, false, 'add'), [user, hasPermission])
 
     const onCloseModal = () => {
         setIsOpenAddModal(!isOpenAddModal)
@@ -161,7 +163,7 @@ const Packages = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Packages' add addClick={onCloseModal} />
+            <PageTitleAddbtn title='Packages' add={canAdd} addClick={onCloseModal} />
             <TableUi
                 columns={columns}
                 data={allPlatforms?.data}

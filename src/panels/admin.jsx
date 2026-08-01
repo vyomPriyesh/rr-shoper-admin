@@ -13,11 +13,16 @@ import Designation from '../pages/DesignationPages/Designation';
 import AddUpdateDesignation from '../pages/DesignationPages/AddUpdateDesignation';
 import { userState } from '../context/UserContext';
 import CanAccessRoute from '../protecttedRoute/CanAccessRoute';
-import { MdOutlineSubtitles } from 'react-icons/md';
+import { MdOutlineLeaderboard, MdOutlineSubtitles } from 'react-icons/md';
 import TicketsTitle from '../pages/TicketsPages/TicketsTitle';
 import TicketForms from '../pages/TicketsPages/TicketForms';
 import AddUpdateTicketForm from '../pages/TicketsPages/AddUpdateTicketForm';
 import { FaWpforms } from 'react-icons/fa';
+import LeadForms from '../pages/LeadsPages/LeadForms';
+import LeadTitles from '../pages/LeadsPages/LeadTitles';
+import AddUpdateLeadForm from '../pages/LeadsPages/AddUpdateLeadForm';
+import Leads from '../pages/LeadsPages/Leads';
+import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
 
 const Admin = ({ role }) => {
 
@@ -54,12 +59,33 @@ const Admin = ({ role }) => {
             children: [
                 {
                     name: "Tickets Title",
-                    to: "tickets-title/view",
+                    to: "tickets/tickets-title/view",
                     icon: MdOutlineSubtitles,
                 },
                 {
                     name: "Tickets Forms",
-                    to: "tickets-forms/view",
+                    to: "tickets/tickets-forms/view",
+                    icon: FaWpforms,
+                },
+            ],
+        },
+        {
+            name: "Leads",
+            icon: MdOutlineLeaderboard ,
+            children: [
+                {
+                    name: "Leads",
+                    to: "leads/view",
+                    icon: MdOutlineSubtitles,
+                },
+                {
+                    name: "Lead Titles",
+                    to: "leads/lead-titles/view",
+                    icon: MdOutlineSubtitles,
+                },
+                {
+                    name: "Lead Forms",
+                    to: "leads/lead-forms/view",
                     icon: FaWpforms,
                 },
             ],
@@ -97,12 +123,25 @@ const Admin = ({ role }) => {
                             <Route path="users/view" element={<Users />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Tickets Title" />}>
-                            <Route path="tickets-title/view" element={<TicketsTitle />} />
+                            <Route path="tickets/tickets-title/view" element={<TicketsTitle />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Tickets Forms" />}>
-                            <Route path="tickets-forms/view" element={<TicketForms />} />
-                            <Route path="tickets-forms/add" element={<AddUpdateTicketForm />} />
-                            <Route path="tickets-forms/update/:id" element={<AddUpdateTicketForm />} />
+                            <Route path="tickets/tickets-forms/view" element={<TicketForms />} />
+                            <Route path="tickets/tickets-forms/add" element={<AddUpdateTicketForm />} />
+                            <Route path="tickets/tickets-forms/update/:id" element={<AddUpdateTicketForm />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Leads" />}>
+                            <Route path="leads/view" element={<Leads />} />
+                            <Route path="leads/add" element={<AddUpdateLead />} />
+                            <Route path="leads/update/:id" element={<AddUpdateLead />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Lead Titles" />}>
+                            <Route path="leads/lead-titles/view" element={<LeadTitles />} />
+                        </Route>
+                         <Route element={<CanAccessRoute module_name="Lead Forms" />}>
+                            <Route path="leads/lead-forms/view" element={<LeadForms />} />
+                            <Route path="leads/lead-forms/add" element={<AddUpdateLeadForm />} />
+                            <Route path="leads/lead-forms/update/:id" element={<AddUpdateLeadForm />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Designation" />}>
                             <Route path="designation/view" element={<Designation />} />

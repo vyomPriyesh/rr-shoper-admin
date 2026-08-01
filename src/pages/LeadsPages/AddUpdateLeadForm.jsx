@@ -9,8 +9,8 @@ import { useToast } from '../../context/ToastContext';
 import { userState } from '../../context/UserContext';
 import FormBuilder from '../../utils/FormBuilder';
 
-const AddUpdateTicketForm = () => {
-    const { tickets } = apiList();
+const AddUpdateLeadForm = () => {
+  const { leadsForms } = apiList();
     const { showToast } = useToast();
     const { user, options } = userState();
     const navigate = useNavigate();
@@ -19,36 +19,36 @@ const AddUpdateTicketForm = () => {
     const [fields, setFields] = useState([]);
     const [formName, setFormName] = useState('');
 
-    const { data: ticketFormData, isFetching: isTicketFormFetching } = useQuery({
-        queryKey: ['ticket-form-edit', id],
-        queryFn: () => api.get(tickets.getTicketForm(id)),
+    const { data: leadFormData, isFetching: isleadFormFetching } = useQuery({
+        queryKey: ['lead-form-edit', id],
+        queryFn: () => api.get(leadsForms.getleadForm(id)),
         enabled: !!id && !!user,
         select: ({ data }) => data?.data,
     });
 
     useEffect(() => {
-        if (ticketFormData) {
-            setFormName(ticketFormData?.ticketTitle || ticketFormData?.formName || '');
-            setFields((ticketFormData?.fields || []).map((field) => ({
+        if (leadFormData) {
+            setFormName(leadFormData?.leadTitle || leadFormData?.formName || '');
+            setFields((leadFormData?.fields || []).map((field) => ({
                 ...field,
                 id: field.id || uuid(),
                 options: field.options || ['Option 1'],
             })));
         }
-    }, [ticketFormData]);
+    }, [leadFormData]);
 
 
     const payload = useMemo(() => ({
-        ticketTitle: formName,
+        leadTitle: formName,
         fields,
     }), [formName, fields]);
 
-    const { mutate: saveTicketForm, isPending: isSaving } = useMutation({
+    const { mutate: saveleadForm, isPending: isSaving } = useMutation({
         mutationFn: () => {
             if (id) {
-                return api.post(tickets.updateTicketForm(id), payload);
+                return api.post(leadsForms.updateleadForm(id), payload);
             }
-            return api.post(tickets.addTicketForm, payload);
+            return api.post(leadsForms.addleadForm, payload);
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success');
@@ -61,20 +61,20 @@ const AddUpdateTicketForm = () => {
 
     return (
         <div className='space-y-5'>
-            <PageTitleAddbtn title={id ? 'Edit Ticket Form' : 'Add Ticket Form'} add addText='Save' addClick={() => saveTicketForm()} disabled={isSaving || isTicketFormFetching} />
+            <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={isSaving || isleadFormFetching} />
             <div className='w-80'>
                 <InputField
                     type='drop-single-select'
-                    placeholder='Choose ticket title'
+                    placeholder='Choose lead title'
                     value={formName || undefined}
                     onChange={(value) => setFormName(value)}
-                    options={options?.ticketsTitles || []}
-                    disabled={isTicketFormFetching}
+                    options={options?.leadTitles || []}
+                    disabled={isleadFormFetching}
                 />
             </div>
             <FormBuilder fields={fields} setFields={setFields} />
         </div>
     );
-};
+}
 
-export default AddUpdateTicketForm;
+export default AddUpdateLeadForm

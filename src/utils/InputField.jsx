@@ -1,12 +1,14 @@
 // components/common/InputField.jsx
 
-import { Image, Input, Select, Switch, Upload } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import { DatePicker, Image, Input, InputNumber, Select, Switch, Upload } from 'antd'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { IoChevronDown } from 'react-icons/io5'
 import { LuEye } from 'react-icons/lu';
 import { MdOutlineEdit } from 'react-icons/md';
 import { RiDeleteBin6Line, RiUploadCloud2Fill } from 'react-icons/ri';
 import ImagesUploadUi from './ImagesUploadUi';
+const { TextArea } = Input;
+
 
 const InputField = (props) => {
     const {
@@ -24,6 +26,7 @@ const InputField = (props) => {
         // select
         options = [],
         multiple = false,
+        imageLimit,
 
         className = "",
         ...rest
@@ -31,6 +34,9 @@ const InputField = (props) => {
 
     const [open, setOpen] = useState(false)
     const dropdownRef = useRef(null)
+    const [focused, setFocused] = useState(false);
+
+    const active = useMemo(() => focused || value, [focused, value]);
 
     useEffect(() => {
         const handleOutside = (e) => {
@@ -65,69 +71,113 @@ const InputField = (props) => {
         }
     }
 
+    {/* <label className="block text-sm font-medium text-heading mb-2">
+        {label}
+    </label> */}
 
+    // !label ? placeholder : active && placeholder
+    // [label, placeholder, active]
 
+    const placeholderText = useMemo(() => placeholder, [placeholder]);
     return (
-        <div className="w-full">
-            {label && (
-                <label className="block text-sm font-medium text-heading mb-2">
+        <div className="w-full relative">
+            {label &&
+                <label className="block text-base text-gray-400 mb-2">
                     {label}
                 </label>
-            )}
-
+            }
             {/* ================= INPUT ================= */}
             {type !== "textarea" && type !== 'switch' &&
                 type !== "drop-single-select" &&
                 type !== "drop-multi-select" &&
-                type !== "password" && type !== 'upload' && (
+                type !== "password" && type !== 'upload' && type !== 'date' && type !== 'number' && (
                     <Input
-                        placeholder={placeholder}
+                        placeholder={placeholderText}
                         onChange={onChange}
                         value={value}
                         type={type}
+                        onFocus={() => setFocused(true)}
+                        onBlur={() => setFocused(false)}
                         {...rest}
                         className={`!w-full !h-10 !rounded-lg !text-base
               !border !border-borderColor
               !px-3 !outline-none !bg-white
               !text-heading
-              placeholder:!text-[#9CA3AF] focus-within:!border-primary hover:!border-primary
+              placeholder:text-[#828589] placeholder:text-sm focus-within:!border-primary hover:!border-primary
               !shadow-none ${className}`}
                     />
                 )}
-
+            {type === "number" && (
+                <InputNumber
+                    placeholder={placeholderText}
+                    controls={false}
+                    onChange={onChange}
+                    value={value}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
+                    {...rest}
+                    className={`!w-full !h-10 !rounded-lg !text-base
+              !border !border-borderColor
+              !px-3 !outline-none !bg-white
+              !text-heading
+              placeholder:text-[#8c8e91] placeholder:text-sm focus-within:!border-primary hover:!border-primary
+              !shadow-none ${className}`}
+                />
+            )}
+            {type === 'date' && (
+                <DatePicker
+                    onChange={onChange}
+                    placeholder={placeholderText}
+                    inputReadOnly
+                    type='date'
+                    className={`!w-full !h-10 !rounded-lg !text-base
+                    !border !border-borderColor
+                    !px-3 !outline-none !bg-white
+                    !text-heading
+                    !shadow-none hover:!border-primary
+                    focus-within:!border-primary ${className}`}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
+                    {...rest}
+                />
+            )}
             {type === "password" && (
                 <Input.Password
-                    placeholder={placeholder}
+                    placeholder={placeholderText}
                     onChange={onChange}
                     value={value}
                     {...rest}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
                     className={`!w-full !h-10 !rounded-lg !text-base
             !border !border-borderColor
-            !px-5 !outline-none !bg-white
+            !px-3 !outline-none !bg-white
             !text-heading
-            placeholder:!text-[#9CA3AF]
-            !shadow-none
+            placeholder:text-[#8c8e91] placeholder:text-sm
+            !shadow-none hover:!border-primary
             focus-within:!border-primary ${className}`}
                 />
             )}
 
             {/* ================= TEXTAREA ================= */}
             {type === 'textarea' && (
-                <textarea
+                <TextArea
                     rows={rows}
                     value={value}
                     onChange={onChange}
-                    placeholder={placeholder}
+                    placeholder={placeholderText}
                     className="
-                        w-full rounded-2xl border border-borderColor
-                        px-2 py-4 outline-none resize-none bg-white
+                        w-full rounded-lg border border-borderColor
+                        px-2 py-2 resize-none bg-white
                         text-heading
-                        placeholder:text-[#9CA3AF]
+                        placeholder:text-[#8c8e91] placeholder:text-sm
                         transition-all duration-300
-                        focus:border-primary
-                        focus:ring-4 focus:ring-primary/10
+                        focus:ring-0 
+                        focus:border-primary hover:!border-primary
                     "
                     {...rest}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
                 />
             )}
 
@@ -210,8 +260,8 @@ const InputField = (props) => {
                         mode={type == 'drop-multi-select' ? 'multiple' : 'single'}
                         value={value}
                         onChange={onChange}
-                        placeholder={placeholder}
-                        className={`!shadow-none !outline-none !w-full !h-10 !rounded-lg !text-base hover:!border-primary  focus-within:!border-primary !capitalize`}
+                        placeholder={placeholderText}
+                        className={`!shadow-none !outline-none !w-full py-1.5 !rounded-lg !text-base hover:!border-primary  focus-within:!border-primary !capitalize`}
                         options={options?.map((item) => ({
                             ...item,
                             label:
@@ -219,6 +269,8 @@ const InputField = (props) => {
                                 item.label.slice(1),
                         }))}
                         {...rest}
+                        onFocus={() => setFocused(true)}
+                        onBlur={() => setFocused(false)}
                     />
                 </>
             )}
@@ -326,7 +378,7 @@ const InputField = (props) => {
             {/* ================= UPLOAD ================= */}
             {type === 'upload' && (
                 <>
-                    <ImagesUploadUi multiple={multiple} value={value} onChange={onChange} />
+                    <ImagesUploadUi multiple={multiple} value={value} onChange={onChange} imageLimit={imageLimit} />
                 </>
             )
             }
@@ -339,8 +391,30 @@ const InputField = (props) => {
                     checked={rest.checked}
                     onChange={onChange}
                     size={rest.size ?? "medium"}
+                    onFocus={() => setFocused(true)}
+                    onBlur={() => setFocused(false)}
                     className={className || 'bg-gray-300 [&.ant-switch-checked]:!bg-primary'} {...rest} />
             )}
+            {/* {label && (
+                <label
+                    className={`
+                    absolute left-3 px-1 bg-white
+                    transition-all duration-200 ease-in-out
+                    pointer-events-none
+                     text-heading
+                    ${(type !== 'switch' || type !== 'upload') && active
+                            ? "-top-2 text-sm"
+                            : "top-2 text-base"
+                        }
+                        ${focused
+                            ? "text-primary"
+                            : "text-gray-400"
+                        }
+                `}
+                >
+                    {label}
+                </label>
+            )} */}
         </div>
     )
 }

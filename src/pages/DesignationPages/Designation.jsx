@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import PageTitleAddbtn from '../../utils/PageTitleAddbtn'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -19,12 +19,7 @@ const Designation = () => {
     const [pagination, setPagination] = useState({ page: 1, limit: 10 })
     const [editId, setEditId] = useState(null)
 
-    const handleAdd = () => {
-        const canAdd = hasPermission('Designation', true, false, 'add')
-        if (canAdd) {
-            navigate('/designation/add')
-        }
-    }
+    const canAdd = useMemo(() => hasPermission('Designations', false, false, 'add'), [user, hasPermission])
 
     const { data: { data: allDesignations = [] } = {}, refetch: allDesignationsRefetch, isFetching: isDesignationsFetching } = useQuery({
         queryKey: ['all-designations', pagination],
@@ -60,7 +55,7 @@ const Designation = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Designation' add addClick={handleAdd} />
+            <PageTitleAddbtn title='Designation' add={canAdd} addClick={() => navigate('/designation/add')} />
             <TableUi
                 module_name='Designation'
                 columns={columns}

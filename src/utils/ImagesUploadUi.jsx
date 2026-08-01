@@ -5,10 +5,12 @@ import { RiUploadCloud2Fill } from 'react-icons/ri';
 import apiList from '../config/apiList';
 import api from '../config/api';
 import ImageWithPreview from './ImageWithPreview';
+import { useToast } from '../context/ToastContext';
 
-const ImagesUploadUi = ({ multiple = false, onChange, value }) => {
+const ImagesUploadUi = ({ multiple = false, onChange, value, imageLimit = 1 }) => {
 
     const { images } = apiList();
+    const { showToast } = useToast();
 
     const [preview, setPreview] = useState({
         open: false,
@@ -53,23 +55,17 @@ const ImagesUploadUi = ({ multiple = false, onChange, value }) => {
             } else {
                 const imagesList = uploadedImages.map((img, index) => ({
                     uid: String(index),
-                    name: img,
+                    name: img.image,
                     status: "done",
                     url:
-                        images.imgUrl + img,
-                    image: img,
+                        images.imgUrl + img.image,
+                    image: img.image,
                 }));
 
-                onChange?.(imagesList);
+                onChange?.([...(value || []), ...imagesList]);
             }
         },
     });
-
-    const handleChange = ({ fileList }) => {
-        if (!fileList.length) return;
-
-        imageHandle({ files: fileList });
-    };
 
     const handlePreview = (file) => {
         setPreview({
@@ -95,7 +91,13 @@ const ImagesUploadUi = ({ multiple = false, onChange, value }) => {
             ].filter(item => item.status);
         }
 
-        return [];
+        return (value || []).map((item, index) => ({
+            uid: item.uid || String(index),
+            name: item.image || item.name || `image-${index}`,
+            status: "done",
+            url: item.url,
+            image: item.image,
+        }));
 
     }, [multiple, value, isPending]);
 
@@ -106,6 +108,11 @@ const ImagesUploadUi = ({ multiple = false, onChange, value }) => {
             onChange();
             return true;
         }
+        const updated = (value || []).filter(item => item.name !== file.name);
+
+        onChange(updated);
+
+        return true;
     };
 
     return (
@@ -114,7 +121,34 @@ const ImagesUploadUi = ({ multiple = false, onChange, value }) => {
                 listType="picture-card"
                 multiple={multiple}
                 beforeUpload={() => false}
-                onChange={handleChange}
+                maxCount={multiple ? imageLimit : 1}
+                onBatchStart={(batchFileInfoList) => {
+                    const currentCount = value?.length || 0;
+                    const remaining = imageLimit - currentCount;
+
+                    if (remaining <= 0) {
+                        showToast(
+                            `You can upload a maximum of ${imageLimit} images.`,
+                            "warning"
+                        );
+                        return;
+                    }
+
+                    if (batchFileInfoList.length > imageLimit) {
+                        showToast(
+                            `You can upload ${remaining} only image${remaining > 1 ? "s" : ""}.`,
+                            "warning"
+                        );
+                    }
+
+                    imageHandle({
+                        files: batchFileInfoList
+                            .slice(0, remaining)
+                            .map(item => ({
+                                originFileObj: item.file,
+                            })),
+                    });
+                }}
                 onPreview={handlePreview}
                 fileList={fileList}
                 // showUploadList

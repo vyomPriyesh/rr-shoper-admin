@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import PageTitleAddbtn from '../utils/PageTitleAddbtn'
 import CommanModal from '../utils/CommanModal'
 import InputField from '../utils/InputField'
@@ -14,13 +14,15 @@ const Platforms = () => {
 
     const { platforms, images } = apiList();
     const { showToast } = useToast();
-    const { user } = userState();
+    const { user, hasPermission } = userState();
 
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
     const [pagination, setPagination] = useState({ page: 1, limit: 10 })
     const [editId, setEditId] = useState(null)
+
+    const canAdd = useMemo(() => hasPermission('Platforms', false, false, 'add'), [user, hasPermission])
 
     const onCloseModal = () => {
         setIsOpenAddModal(!isOpenAddModal)
@@ -112,7 +114,7 @@ const Platforms = () => {
     }
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Platforms' add addClick={onCloseModal} />
+            <PageTitleAddbtn title='Platforms' add={canAdd} addClick={onCloseModal} />
             <TableUi
                 columns={columns}
                 data={allPlatforms?.data}

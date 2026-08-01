@@ -9,8 +9,8 @@ import { userState } from '../../context/UserContext';
 import { useToast } from '../../context/ToastContext';
 import InputField from '../../utils/InputField';
 
-const TicketForms = () => {
-    const { tickets } = apiList();
+const LeadForms = () => {
+    const { leadsForms } = apiList();
     const { showToast } = useToast();
     const { user, hasPermission } = userState();
     const navigate = useNavigate();
@@ -18,9 +18,9 @@ const TicketForms = () => {
     const [pagination, setPagination] = useState({ page: 1, limit: 10 });
     const [editId, setEditId] = useState(null);
 
-    const { data: { data: allTicketForms = [] } = {}, refetch: allTicketFormsRefetch, isFetching: isTicketFormsFetching } = useQuery({
-        queryKey: ['all-ticket-forms', pagination],
-        queryFn: () => api.post(tickets.allTicketForms, pagination),
+    const { data: { data: allLeadForms = [] } = {}, refetch: allLeadFormsRefetch, isFetching: isLeadFormsFetching } = useQuery({
+        queryKey: ['all-lead-forms', pagination],
+        queryFn: () => api.post(leadsForms.allLeadForms, pagination),
         enabled: !!user,
         select: ({ data }) => data,
     });
@@ -28,11 +28,11 @@ const TicketForms = () => {
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
             setEditId(id);
-            return api.get(tickets.updateTicketFormStatus(id));
+            return api.get(leadsForms.updateLeadFormStatus(id));
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success');
-            allTicketFormsRefetch();
+            allLeadFormsRefetch();
         },
         onError: ({ response }) => {
             showToast(response?.data?.error?.error_message || 'Something went wrong', 'error');
@@ -40,10 +40,10 @@ const TicketForms = () => {
     });
 
     const { mutate: handleDelete } = useMutation({
-        mutationFn: ({ _id }) => api.delete(tickets.deleteTicketForm(_id)),
+        mutationFn: ({ _id }) => api.delete(leadsForms.deleteLeadForm(_id)),
         onSuccess: ({ data }) => {
             showToast(data.message, 'success');
-            allTicketFormsRefetch();
+            allLeadFormsRefetch();
         },
         onError: ({ response }) => {
             showToast(response?.data?.error?.error_message || 'Something went wrong', 'error');
@@ -52,10 +52,10 @@ const TicketForms = () => {
 
     const columns = [
         {
-            title: 'Ticket Title',
-            dataIndex: 'ticketTitle',
-            key: 'ticketTitle',
-            render: (_, { ticketTitle }) => <span className='capitalize'>{ticketTitle?.title}</span>,
+            title: 'lead Title',
+            dataIndex: 'leadTitle',
+            key: 'leadTitle',
+            render: (_, { leadTitle }) => <span className='capitalize'>{leadTitle?.title}</span>,
         },
         {
             title: 'Status',
@@ -72,19 +72,19 @@ const TicketForms = () => {
         },
     ];
 
-    const canAdd = useMemo(() => hasPermission('Tickets Forms', false, false, 'add'), [user, hasPermission]);
+    const canAdd = useMemo(() => hasPermission('lead Forms', false, false, 'add'), [user, hasPermission])
 
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Tickets Forms' add={canAdd} addClick={() => navigate('/tickets/tickets-forms/add')} />
+            <PageTitleAddbtn title='Lead Forms' add={canAdd} addClick={() => navigate('/leads/lead-forms/add')} />
             <TableUi
-                module_name='Tickets Forms'
+                module_name='Lead Forms'
                 columns={columns}
-                data={allTicketForms?.data}
-                pagination={allTicketForms?.pagination}
-                gridLoading={isTicketFormsFetching || statusPending}
+                data={allLeadForms?.data}
+                pagination={allLeadForms?.pagination}
+                gridLoading={isLeadFormsFetching || statusPending}
                 action
-                editClick='/tickets/tickets-forms/update'
+                editClick='/leads/lead-forms/update'
                 deleteClick={handleDelete}
                 handlePagination={setPagination}
             />
@@ -92,4 +92,4 @@ const TicketForms = () => {
     );
 };
 
-export default TicketForms;
+export default LeadForms;

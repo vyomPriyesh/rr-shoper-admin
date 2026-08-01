@@ -20,16 +20,22 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
     };
 
     const isActiveLink = (to) => {
+        const currentPath = window.location.pathname;
+
+        const routePath = `/${to}`;
+
         return (
-            window.location.pathname.startsWith(`/${to.split("/")[0]}`) ||
+            currentPath === routePath ||
+            currentPath.startsWith(`${routePath}/`) ||
             (to === "dashboard" &&
-                window.location.pathname === `/${user?.role}`)
+                currentPath === `/${user?.role}`)
         );
     };
 
     const isChildActive = (children) => {
         return children.some((child) => isActiveLink(child.to));
     };
+
 
     const filterLinksByPermission = (items) => {
         if (user?.role === "admin") return items;
@@ -88,7 +94,7 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
     `}
                             >
                                 <div className="flex items-center gap-3">
-                                    <item.icon className="text-xl" />
+                                    {item.icon && <item.icon className="text-xl" />}
 
                                     {!isExpanded && (
                                         <span className="text-sm font-medium">
@@ -129,7 +135,7 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
                     flex items-center gap-3 rounded-md px-3 py-2 transition`
                                             }
                                         >
-                                            <child.icon className="text-lg" />
+                                            {child.icon && <child.icon className="text-lg" />}
 
                                             {!isExpanded && (
                                                 <span className="text-sm">

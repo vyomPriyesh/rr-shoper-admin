@@ -10,8 +10,8 @@ import api from '../../config/api'
 import { useToast } from '../../context/ToastContext'
 import { userState } from '../../context/UserContext'
 
-const TicketsTitle = () => {
-    const { tickets } = apiList()
+const LeadTitles = () => {
+    const { leadTitles } = apiList()
     const { showToast } = useToast()
     const { user, hasPermission } = userState()
 
@@ -20,7 +20,7 @@ const TicketsTitle = () => {
     const [editId, setEditId] = useState(null)
     const [form] = Form.useForm()
 
-    const canAdd = useMemo(() => hasPermission('Tickets Title', false, false, 'add'), [user, hasPermission])
+    const canAdd = useMemo(() => hasPermission('Designations', false, false, 'add'), [user, hasPermission])
 
     const onCloseModal = () => {
         setIsOpenAddModal(false)
@@ -34,9 +34,9 @@ const TicketsTitle = () => {
         form.resetFields()
     }
 
-    const { data: { data: allTicketsTitle = [] } = {}, refetch: allTicketsTitleRefetch, isFetching: isTicketsTitleFetching } = useQuery({
-        queryKey: ['all-tickets-title', pagination],
-        queryFn: () => api.post(tickets.allTicketsTitle, pagination),
+    const { data: { data: allLeadTitles = [] } = {}, refetch: allLeadTitlesRefetch, isFetching: isLeadTitlesFetching } = useQuery({
+        queryKey: ['all-lead-titles', pagination],
+        queryFn: () => api.post(leadTitles.allLeadTitles, pagination),
         enabled: !!user,
         select: ({ data }) => data,
     })
@@ -44,27 +44,27 @@ const TicketsTitle = () => {
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
             setEditId(id)
-            return api.get(tickets.statusUpdate(id))
+            return api.get(leadTitles.updateleadTitleUpdate(id))
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success')
-            allTicketsTitleRefetch()
+            allLeadTitlesRefetch()
         },
         onError: ({ response }) => {
             showToast(response?.data?.error?.error_message || 'Something went wrong', 'error')
         }
     })
 
-    const { mutate: handleSubmitTicketTitle, isPending: isSaving } = useMutation({
+    const { mutate: handleSubmitLeadTitles, isPending: isSaving } = useMutation({
         mutationFn: async () => {
             const values = await form.validateFields()
             const payload = { title: values.title?.trim() }
-            return api.post(editId ? tickets.updateTicketsTitle(editId) : tickets.addTicketsTitle, payload)
+            return api.post(editId ? leadTitles.updateLeadTitle(editId) : leadTitles.addLeadTitle, payload)
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success')
             onCloseModal()
-            allTicketsTitleRefetch()
+            allLeadTitlesRefetch()
         },
         onError: ({ response }) => {
             showToast(response?.data?.error?.error_message || 'Something went wrong', 'error')
@@ -72,10 +72,10 @@ const TicketsTitle = () => {
     })
 
     const { mutate: handleDelete } = useMutation({
-        mutationFn: ({ _id }) => api.delete(tickets.deleteTicketsTitle(_id)),
+        mutationFn: ({ _id }) => api.delete(leadTitles.deleteLeadTitle(_id)),
         onSuccess: ({ data }) => {
             showToast(data.message, 'success')
-            allTicketsTitleRefetch()
+            allLeadTitlesRefetch()
         },
         onError: ({ response }) => {
             showToast(response?.data?.error?.error_message || 'Something went wrong', 'error')
@@ -112,13 +112,13 @@ const TicketsTitle = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Tickets Title' add={canAdd} addClick={openAddModal} />
+            <PageTitleAddbtn title='Lead Titles' add={canAdd} addClick={openAddModal} />
             <TableUi
-                module_name='Tickets Title'
+                module_name='Lead Titles'
                 columns={columns}
-                data={allTicketsTitle?.data}
-                pagination={allTicketsTitle?.pagination}
-                gridLoading={isTicketsTitleFetching || isSaving}
+                data={allLeadTitles?.data}
+                pagination={allLeadTitles?.pagination}
+                gridLoading={isLeadTitlesFetching || isSaving}
                 action
                 callBack
                 editClick={handleEdit}
@@ -126,9 +126,9 @@ const TicketsTitle = () => {
                 handlePagination={setPagination}
             />
             <CommanModal
-                title={editId ? 'Update Ticket Title' : 'Add Ticket Title'}
+                title={editId ? 'Update Leads Title' : 'Add Leads Title'}
                 open={isOpenAddModal}
-                onDone={handleSubmitTicketTitle}
+                onDone={handleSubmitLeadTitles}
                 onClose={onCloseModal}
             >
                 <Form form={form} className='flex flex-col gap-3'>
@@ -136,7 +136,7 @@ const TicketsTitle = () => {
                         name='title'
                         rules={[{ required: true, message: 'Title is required' }]}
                     >
-                        <InputField type='text' placeholder='Enter Ticket Title' />
+                        <InputField type='text' placeholder='Enter Leads Title' />
                     </Form.Item>
                 </Form>
             </CommanModal>
@@ -144,4 +144,4 @@ const TicketsTitle = () => {
     )
 }
 
-export default TicketsTitle
+export default LeadTitles

@@ -19,7 +19,7 @@ const apiList = () => {
             statusUpdate: (id) => `users/update-status/${id}`,
         },
 
-        tickets:{
+        tickets: {
             allTicketsTitle: 'allTicketsTitle',
             addTicketsTitle: 'tickets-title/add-tickets-title',
             updateTicketsTitle: (id) => `tickets-title/update-tickets-title/${id}`,
@@ -31,6 +31,34 @@ const apiList = () => {
             updateTicketFormStatus: (id) => `ticket-form/update-status/${id}`,
             deleteTicketForm: (id) => `ticket-form/delete-ticket-form/${id}`,
             getTicketForm: (id) => `ticket-form/${id}`,
+        },
+
+        leadTitles: {
+            allLeadTitles: 'allLeadTitles',
+            addLeadTitles: 'lead-titles/add-lead-title',
+            updateLeadTitle: (id) => `lead-titles/update-lead-title/${id}`,
+            deleteLeadTitle: (id) => `lead-titles/delete-lead-title/${id}`,
+            updateleadTitleUpdate: (id) => `lead-titles/update-lead-title-status/${id}`,
+        },
+
+        leadsForms: {
+            allLeadForms: 'allLeadForms',
+            addLeadForm: 'lead-forms/add-lead-form',
+            updateleadForm: (id) => `lead-forms/update-lead-form/${id}`,
+            updateleadFormStatus: (id) => `lead-forms/update-lead-form-status/${id}`,
+            deleteleadForm: (id) => `lead-forms/delete-lead-form/${id}`,
+            getleadForm: (id) => `lead-forms/${id}`,
+        },
+
+        leads: {
+            allLeads: 'allLeads',
+            addLead: 'leads/add-lead',
+            updateLead: (id) => `leads/update-lead/${id}`,
+            updateLeadStatus: (id) => `leads/update-lead-status/${id}`,
+            deleteLead: (id) => `leads/delete-lead/${id}`,
+            getLead: (id) => `leads/${id}`,
+            getFormsByLeadTitle: (leadTitle) => `lead-forms/by-lead-title/${leadTitle}`,
+            findUser: `/leads/findUser`
         },
 
         designations: {

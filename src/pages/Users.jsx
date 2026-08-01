@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import PageTitleAddbtn from '../utils/PageTitleAddbtn'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { userState } from '../context/UserContext';
@@ -133,12 +133,10 @@ const Users = () => {
         form.resetFields()
     }
 
+    const canAdd = useMemo(() => hasPermission('Users', false, false, 'add'), [user, hasPermission])
     const handleAdd = () => {
-        const canAdd = hasPermission('Users', true, false, 'add')
-        if (canAdd) {
-            setEditId(null)
-            setIsOpenAddModal(true)
-        }
+        setEditId(null)
+        setIsOpenAddModal(true)
     }
 
     const handleEdit = (data) => {
@@ -154,7 +152,7 @@ const Users = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Users' add addClick={handleAdd} />
+            <PageTitleAddbtn title='Users' add={canAdd} addClick={handleAdd} />
             <TableUi
                 columns={columns}
                 data={allUsers?.data}
