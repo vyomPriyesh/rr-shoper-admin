@@ -48,8 +48,13 @@ export const UserProvider = ({ children }) => {
         const permission = designation?.permissions?.find(
             (p) => p.module_name === module_name
         );
-
-        const action = forAction ? forAction : pathname.split(module_name.toLowerCase())[1]?.split("/")[1];
+        const slugify = (value) => {
+            return value
+                ?.toLowerCase()
+                .trim()
+                .replace(/\s+/g, "-");
+        };
+        const action = forAction ? forAction : pathname.split(slugify(module_name))[1]?.split("/")[1];
         const allowed = !!permission?.actions?.[action];
         if (!allowed && showModal) {
             Swal.fire({

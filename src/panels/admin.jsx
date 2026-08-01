@@ -50,20 +50,58 @@ const Admin = ({ role }) => {
             icon: SiCodesignal
         },
         {
-            name: 'Tickets Title', to: 'tickets-title/view', role: role,
-            icon: MdOutlineSubtitles
+            name: "Tickets",
+            icon: FaWpforms,
+            children: [
+                {
+                    name: "Tickets Title",
+                    to: "tickets-title/view",
+                    icon: MdOutlineSubtitles,
+                },
+                {
+                    name: "Tickets Forms",
+                    to: "tickets-forms/view",
+                    icon: FaWpforms,
+                },
+            ],
         },
-        {
-            name: 'Tickets Forms', to: 'tickets-forms/view', role: role,
-            icon: FaWpforms
-        }
     ]
 
-    const links = allLinks.filter(link => {
-        if (user?.role === 'admin') return true;
-        const permissionModuleNames = designation?.permissions?.map(p => p.module_name) || [];
-        return permissionModuleNames.includes(link.name);
-    });
+    const filterLinksByPermission = (items) => {
+        if (user?.role === "admin") return items;
+
+        const permissionModuleNames =
+            designation?.permissions?.map((p) => p.module_name) || [];
+
+        return items
+            .map((link) => {
+
+                // If parent has children
+                if (link.children) {
+                    const filteredChildren = filterLinksByPermission(link.children);
+
+                    // Keep parent only if children available
+                    if (filteredChildren.length > 0) {
+                        return {
+                            ...link,
+                            children: filteredChildren,
+                        };
+                    }
+
+                    return null;
+                }
+
+                // Normal menu permission check
+                if (permissionModuleNames.includes(link.name)) {
+                    return link;
+                }
+
+                return null;
+            })
+            .filter(Boolean);
+    };
+
+    const links = filterLinksByPermission(allLinks);
 
     return (
         <div>

@@ -33,8 +33,25 @@ const AddUpdateDesignation = ({ links }) => {
         select: ({ data }) => data?.data
     })
 
+    const flattenLinks = useCallback((items) => {
+        let result = [];
+
+        items.forEach((item) => {
+            if (item.children) {
+                result.push(
+                    ...flattenLinks(item.children)
+                );
+            } else {
+                result.push(item);
+            }
+        });
+
+        return result;
+    }, []);
+
     // Memoize computed rowData structure
     const computedRowData = useMemo(() => {
+        const allLinks = flattenLinks(links || []);
         const permissionMap = new Map(
             (designationData?.permissions || []).map((permission) => [
                 permission.module_name,
@@ -42,7 +59,7 @@ const AddUpdateDesignation = ({ links }) => {
             ])
         );
 
-        return (links || []).map((list, index) => {
+        return allLinks.map((list, index) => {
             const actions = permissionMap.get(list.name);
 
             return {
