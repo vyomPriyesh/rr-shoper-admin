@@ -9,7 +9,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { userState } from "../../context/UserContext";
 
-const AddUpdateDesignation = ({ links }) => {
+const AddUpdateDesignation = ({ allLinksData }) => {
 
     const { showToast } = useToast();
     const { designations } = apiList();
@@ -51,7 +51,7 @@ const AddUpdateDesignation = ({ links }) => {
 
     // Memoize computed rowData structure
     const computedRowData = useMemo(() => {
-        const allLinks = flattenLinks(links || []);
+        const allLinks = flattenLinks(allLinksData || []);
         const permissionMap = new Map(
             (designationData?.permissions || []).map((permission) => [
                 permission.module_name,
@@ -73,7 +73,7 @@ const AddUpdateDesignation = ({ links }) => {
                 },
             };
         });
-    }, [designationData, links]);
+    }, [designationData, allLinksData]);
 
     // Sync computed rowData to state
     useEffect(() => {

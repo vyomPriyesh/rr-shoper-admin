@@ -21,7 +21,6 @@ import { FaWpforms } from 'react-icons/fa';
 
 const Admin = ({ role }) => {
 
-    const { designation, user } = userState()
     const [isExpanded, setIsExpanded] = useState(false);
 
     const toggleMenu = () => {
@@ -67,42 +66,6 @@ const Admin = ({ role }) => {
         },
     ]
 
-    const filterLinksByPermission = (items) => {
-        if (user?.role === "admin") return items;
-
-        const permissionModuleNames =
-            designation?.permissions?.map((p) => p.module_name) || [];
-
-        return items
-            .map((link) => {
-
-                // If parent has children
-                if (link.children) {
-                    const filteredChildren = filterLinksByPermission(link.children);
-
-                    // Keep parent only if children available
-                    if (filteredChildren.length > 0) {
-                        return {
-                            ...link,
-                            children: filteredChildren,
-                        };
-                    }
-
-                    return null;
-                }
-
-                // Normal menu permission check
-                if (permissionModuleNames.includes(link.name)) {
-                    return link;
-                }
-
-                return null;
-            })
-            .filter(Boolean);
-    };
-
-    const links = filterLinksByPermission(allLinks);
-
     return (
         <div>
             <Navbar toggleMenu={toggleMenu} />
@@ -119,7 +82,7 @@ const Admin = ({ role }) => {
                     <Sidebar
                         isExpanded={isExpanded}
                         toggleMenu={toggleMenu}
-                        links={links}
+                        allLinks={allLinks}
                     />
                 </div>
                 <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5">
@@ -143,8 +106,8 @@ const Admin = ({ role }) => {
                         </Route>
                         <Route element={<CanAccessRoute module_name="Designation" />}>
                             <Route path="designation/view" element={<Designation />} />
-                            <Route path="designation/add" element={<AddUpdateDesignation links={links} />} />
-                            <Route path="designation/update/:id" element={<AddUpdateDesignation links={links} />} />
+                            <Route path="designation/add" element={<AddUpdateDesignation allLinksData={allLinks} />} />
+                            <Route path="designation/update/:id" element={<AddUpdateDesignation allLinksData={allLinks} />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/dashboard" replace />} />
                     </Routes>

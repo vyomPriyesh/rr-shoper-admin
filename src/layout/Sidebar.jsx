@@ -4,8 +4,8 @@ import { MdLogout } from "react-icons/md";
 import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 import { userState } from "../context/UserContext";
 
-const Sidebar = ({ isExpanded, toggleMenu, links }) => {
-    const { user, logout } = userState();
+const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
+    const { user, designation, logout } = userState();
     const [openGroups, setOpenGroups] = useState({});
 
     const change = () => {
@@ -30,6 +30,42 @@ const Sidebar = ({ isExpanded, toggleMenu, links }) => {
     const isChildActive = (children) => {
         return children.some((child) => isActiveLink(child.to));
     };
+
+    const filterLinksByPermission = (items) => {
+        if (user?.role === "admin") return items;
+
+        const permissionModuleNames =
+            designation?.permissions?.map((p) => p.module_name) || [];
+
+        return items
+            .map((link) => {
+
+                // If parent has children
+                if (link.children) {
+                    const filteredChildren = filterLinksByPermission(link.children);
+
+                    // Keep parent only if children available
+                    if (filteredChildren.length > 0) {
+                        return {
+                            ...link,
+                            children: filteredChildren,
+                        };
+                    }
+
+                    return null;
+                }
+
+                // Normal menu permission check
+                if (permissionModuleNames.includes(link.name)) {
+                    return link;
+                }
+
+                return null;
+            })
+            .filter(Boolean);
+    };
+
+    const links = filterLinksByPermission(allLinks);
 
     return (
         <div className="rounded-lg p-2 space-y-2 border border-borderColor bg-background h-full overflow-y-auto">
