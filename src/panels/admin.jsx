@@ -111,7 +111,7 @@ const Admin = ({ role }) => {
                         allLinks={allLinks}
                     />
                 </div>
-                <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5">
+                <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5 menu">
                     <Routes>
                         <Route element={<CanAccessRoute module_name="Platforms" />}>
                             <Route path="platforms/view" element={<Platforms />} />

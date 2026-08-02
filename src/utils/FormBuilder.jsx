@@ -11,7 +11,7 @@ import { userState } from '../context/UserContext';
 
 
 
-const palette = [
+export const formInputs = [
     { type: 'input', label: 'Text' },
     { type: 'number', label: 'Number' },
     { type: 'date', label: 'Date' },
@@ -90,7 +90,7 @@ const FormBuilder = ({ fields, setFields }) => {
         <div className='flex flex-row gap-5'>
             <div className='w-1/6 rounded border border-gray-300 bg-white p-3 space-y-3'>
                 <h3>Fields</h3>
-                {palette.map((item) => (
+                {formInputs.map((item) => (
                     <Button key={item.type} block onClick={() => addField(item.type)}>{item.label}</Button>
                 ))}
             </div>
@@ -116,7 +116,7 @@ const FormBuilder = ({ fields, setFields }) => {
                         </div>
                         <div className='gap-3 flex flex-row text-nowrap items-center justify-between'>
                             <span>Depend on Parent Field</span>
-                            <InputField type='switch' checkedChildren={null} unCheckedChildren={null} checked={current.depend_on_parent_field || false} onChange={(value) => {update('required', false), update('depend_on_parent_field', value)}} />
+                            <InputField type='switch' checkedChildren={null} unCheckedChildren={null} checked={current.depend_on_parent_field || false} onChange={(value) => { update('required', false), update('depend_on_parent_field', value) }} />
                         </div>
                         {current.depend_on_parent_field &&
                             <div className='gap-3 flex flex-row text-nowrap items-center justify-between'>

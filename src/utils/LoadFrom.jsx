@@ -77,10 +77,10 @@ const LoadFrom = forwardRef(({ formFields, title, isLoading, formValues, setForm
             ...prev,
             [name]: value,
             ...(multiple && {
-                [`add_mutiple_${name}`]: true,
+                [`add_mutiple_${name}_for_manage`]: true,
             }),
             ...(isManual && {
-                [`add_manully_${name}`]: true,
+                [`add_manully_${name}_for_manage`]: true,
             }),
             [`${type}_${name}_for_manage`]: value
         }))

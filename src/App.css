@@ -18,7 +18,10 @@ input[type="number"] {
     font-size: 1rem;
     line-height: 1.75rem;
 }
-
+.number_placeholder .ant-input-number-input::placeholder {
+  color: #595c60; /* your placeholder color */
+  opacity: 1; /* for Firefox */
+}
 .ant-select-placeholder {
     color: #595c60 !important;
 }

@@ -27,7 +27,7 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
             dataIndex: 'action',
             key: 'action',
             render: (_, record) => <div className="flex flex-row gap-4">
-                {(editClick && hasPermission(module_name, false, false, 'edit')) && <ButtonUi onClick={() => handleRowAction('edit', editClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
+                {(editClick && hasPermission(module_name, false, false, 'update')) && <ButtonUi onClick={() => handleRowAction('edit', editClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
                 {(viewClick && hasPermission(module_name, false, false, 'view')) && <ButtonUi onClick={() => handleRowAction('view', viewClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<MdRemoveRedEye />} />}
                 {(deleteClick && hasPermission(module_name, false, false, 'delete')) &&
                     <Popconfirm title="Delete Platform" description="Are you sure to delete this Platform?" onConfirm={() => deleteClick(record)}>

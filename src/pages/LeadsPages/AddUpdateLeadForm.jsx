@@ -8,9 +8,10 @@ import api from '../../config/api';
 import { useToast } from '../../context/ToastContext';
 import { userState } from '../../context/UserContext';
 import FormBuilder from '../../utils/FormBuilder';
+import Loader from '../../utils/Loader';
 
 const AddUpdateLeadForm = () => {
-  const { leadsForms } = apiList();
+    const { leadsForms } = apiList();
     const { showToast } = useToast();
     const { user, options } = userState();
     const navigate = useNavigate();
@@ -61,6 +62,7 @@ const AddUpdateLeadForm = () => {
 
     return (
         <div className='space-y-5'>
+            {isSaving && <Loader />}
             <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={isSaving || isleadFormFetching} />
             <div className='w-80'>
                 <InputField

@@ -103,7 +103,7 @@ const InputField = (props) => {
               !border !border-borderColor
               !px-3 !outline-none !bg-white
               !text-heading
-              placeholder:text-[#828589] placeholder:text-sm focus-within:!border-primary hover:!border-primary
+              placeholder:text-[#595c60] placeholder:text-base focus-within:!border-primary hover:!border-primary
               !shadow-none ${className}`}
                     />
                 )}
@@ -117,11 +117,12 @@ const InputField = (props) => {
                     onBlur={() => setFocused(false)}
                     {...rest}
                     className={`!w-full !h-10 !rounded-lg !text-base
-              !border !border-borderColor
-              !px-3 !outline-none !bg-white
-              !text-heading
-              placeholder:text-[#8c8e91] placeholder:text-sm focus-within:!border-primary hover:!border-primary
-              !shadow-none ${className}`}
+                        !border !border-borderColor
+                        !px-3 !outline-none !bg-white
+                        !text-heading [&_.ant-input-number-input:disabled]:!text-heading
+                        [&_.ant-input-number-input:disabled]:!opacity-100
+                        number_placeholder focus-within:!border-primary hover:!border-primary
+                        !shadow-none ${className}`}
                 />
             )}
             {type === 'date' && (
@@ -153,7 +154,7 @@ const InputField = (props) => {
             !border !border-borderColor
             !px-3 !outline-none !bg-white
             !text-heading
-            placeholder:text-[#8c8e91] placeholder:text-sm
+            placeholder:text-[#595c60] placeholder:text-sm
             !shadow-none hover:!border-primary
             focus-within:!border-primary ${className}`}
                 />
@@ -170,7 +171,7 @@ const InputField = (props) => {
                         w-full rounded-lg border border-borderColor
                         px-2 py-2 resize-none bg-white
                         text-heading
-                        placeholder:text-[#8c8e91] placeholder:text-sm
+                        placeholder:text-[#595c60] placeholder:text-sm
                         transition-all duration-300
                         focus:ring-0 
                         focus:border-primary hover:!border-primary
