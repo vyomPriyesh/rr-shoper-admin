@@ -36,7 +36,7 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem("user");
     };
 
-    const { data: { data: { data: options = {} } = {} } = {} } = useQuery({
+    const { data: { data: { data: options = {} } = {} } = {}, isLoading } = useQuery({
         queryFn: () => api.get(allOptions.get)
     })
 
@@ -75,6 +75,7 @@ export const UserProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading, options, designation, setDesignation, hasPermission }}>
+            {isLoading && <Loader />}
             {children}
         </UserContext.Provider>
     );

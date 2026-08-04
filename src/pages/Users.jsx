@@ -9,6 +9,7 @@ import { Form, Image } from 'antd';
 import TableUi from '../utils/TableUi';
 import InputField from '../utils/InputField';
 import CommanModal from '../utils/CommanModal';
+import Loader from '../utils/Loader';
 
 const Users = () => {
 
@@ -50,7 +51,7 @@ const Users = () => {
         }
     })
 
-    const { mutate: handleUserAction } = useMutation({
+    const { mutate: handleUserAction, isPending: userHandlePending } = useMutation({
         mutationFn: async () => {
             const payload = await form.validateFields();
             payload.role = 'user';
@@ -152,6 +153,7 @@ const Users = () => {
 
     return (
         <div className='flex flex-col gap-5'>
+            {userHandlePending && <Loader />}
             <PageTitleAddbtn title='Users' add={canAdd} addClick={handleAdd} />
             <TableUi
                 columns={columns}
