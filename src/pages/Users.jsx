@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import PageTitleAddbtn from '../utils/PageTitleAddbtn'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { userState } from '../context/UserContext';
@@ -23,12 +23,20 @@ const Users = () => {
     const [form] = Form.useForm();
     const [isOpenPassModal, setIsOpenPassModal] = useState(false)
 
-    const { data: { data: allUsers = [] } = {}, refetch: allUsersRefetch, isFetching: allUsersFetching } = useQuery({
+    const { data, refetch: allUsersRefetch, isFetching: allUsersFetching, error, isError } = useQuery({
         queryKey: ['all-users', pagination],
         queryFn: () => api.post(users.all, pagination),
         enabled: !!user,
-        select: ({ data }) => data
     })
+
+    const allUsers = useMemo(() => data?.data?.data || [], [data]);
+
+    useEffect(() => {
+        if (isError) {
+            showToast(error?.response?.data?.error?.error_message,'error')
+        }
+    }, [isError])
+    console.log("response:", error?.response);
 
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
