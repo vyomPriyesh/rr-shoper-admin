@@ -33,7 +33,7 @@ const Users = () => {
 
     useEffect(() => {
         if (isError) {
-            showToast(error?.response?.data?.error?.error_message,'error')
+            showToast(error?.response?.data?.error?.error_message, 'error')
         }
     }, [isError])
     console.log("response:", error?.response);
@@ -46,6 +46,9 @@ const Users = () => {
         onSuccess: ({ data }) => {
             showToast(data.message, "success");
             allUsersRefetch()
+        },
+        onError: ({ response }) => {
+            showToast(response?.data?.error?.error_message, "error");
         }
     })
 
