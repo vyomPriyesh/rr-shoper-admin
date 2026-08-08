@@ -87,6 +87,7 @@ const Users = () => {
             title: 'User',
             dataIndex: 'name',
             key: 'name',
+            fixed:'start',
             render: (_, record) => {
                 return (
                     <div className="flex flex-row gap-3 place-items-center">

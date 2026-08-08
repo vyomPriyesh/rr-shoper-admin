@@ -49,12 +49,12 @@ const Navbar = ({ toggleMenu }) => {
         <>
             <div className="bg-white sticky top-0 z-40 flex items-center justify-between px-4 gap-5 md:px-6 lg:px-10 h-[8vh]">
                 <div className="flex place-items-center md:gap-5 gap-3">
-                    <button onClick={toggleMenu} className="text-2xl">
+                    <button onClick={toggleMenu} className="2xl:text-2xl text-xl">
                         <FiMenu />
                     </button>
                     <div className="flex flex-col">
-                        <Link to={`/dashboard`} className='text-2xl font-semibold capitalize'>{user?.name}</Link>
-                        <span className='text-sm text-gray-500 capitalize'>{user?.role == 'admin' ? 'Administrator' : designation?.name}</span>
+                        <Link to={`/dashboard`} className='2xl:text-2xl text-lg font-semibold capitalize'>{user?.name}</Link>
+                        <span className='2xl:text-sm text-xs text-gray-500 capitalize'>{user?.role == 'admin' ? 'Administrator' : designation?.name}</span>
                     </div>
                 </div>
                 <div className="flex items-center gap-10">

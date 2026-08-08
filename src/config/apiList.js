@@ -58,7 +58,7 @@ const apiList = () => {
             deleteLead: (id) => `leads/delete-lead/${id}`,
             getLead: (id) => `leads/${id}`,
             getFormsByLeadTitle: (leadTitle) => `lead-forms/by-lead-title/${leadTitle}`,
-            findUser: `/leads/findUser`
+            findCustomer: `/leads/findCustomer`
         },
 
         designations: {

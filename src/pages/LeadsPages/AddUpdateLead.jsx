@@ -33,12 +33,12 @@ const AddUpdateLead = () => {
     });
 
     const { mutate: findUserRefetch } = useMutation({
-        mutationFn: async (payload) => await api.post(leads.findUser, payload),
+        mutationFn: async (payload) => await api.post(leads.findCustomer, payload),
         onSuccess: ({ data }) => {
             if (data?.data) {
                 setFormData((prev) => ({
                     ...prev,
-                    user: data?.data?._id,
+                    customer: data?.data?._id,
                     name: data?.data?.name || '',
                     email: data?.data?.email || '',
                 }))
@@ -86,12 +86,12 @@ const AddUpdateLead = () => {
     useEffect(() => {
         if (leadData) {
             setFormData({
-                user: leadData?.user?._id,
-                name: leadData?.user?.name || '',
-                email: leadData?.user?.email || '',
-                mobile: leadData?.user?.mobile || '',
+                customer: leadData?.customer?._id,
+                name: leadData?.customer?.name || '',
+                email: leadData?.customer?.email || '',
+                mobile: leadData?.customer?.mobile || '',
                 assign_user: leadData?.assign_user?._id,
-                status:leadData?.status
+                status: leadData?.status
             })
             setFormValues(leadData?.values)
         }
@@ -137,7 +137,7 @@ const AddUpdateLead = () => {
             newErrors.email = "Invalid email address";
         }
 
-        if (!formData?.assign_user) {
+        if (user?.role == 'admin' && !formData?.assign_user) {
             newErrors.assign_user = "Please select an assign person";
         }
 
@@ -176,7 +176,7 @@ const AddUpdateLead = () => {
     return (
         <div className='space-y-5'>
             {isSaving && <Loader />}
-            <div className="bg-white rounded-lg p-3">
+            <div className="bg-white rounded-lg p-3 sticky top-0 z-50">
                 <PageTitleAddbtn
                     title={id ? 'Edit lead' : 'Add lead'}
                     add addText='Save'
@@ -217,7 +217,7 @@ const AddUpdateLead = () => {
                     />
                     <span className='text-red-500 text-sm'>{errors?.email}</span>
                 </div>
-                <div className='flex flex-col gap-2'>
+                {user?.role == 'admin' && <div className='flex flex-col gap-2'>
                     <InputField
                         label='Assign Person'
                         type='drop-single-select'
@@ -227,7 +227,7 @@ const AddUpdateLead = () => {
                         options={options?.users}
                     />
                     <span className='text-red-500 text-sm'>{errors?.assign_user}</span>
-                </div>
+                </div>}
                 <LoadFrom ref={childRef} formFields={leadForm?.fields || []} title={leadForm?.leadTitle} isLoading={isLeadFormPending} formValues={formValues} setFormValues={setFormValues} />
             </div>
         </div>

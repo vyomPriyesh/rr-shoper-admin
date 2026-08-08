@@ -23,6 +23,7 @@ import LeadTitles from '../pages/LeadsPages/LeadTitles';
 import AddUpdateLeadForm from '../pages/LeadsPages/AddUpdateLeadForm';
 import Leads from '../pages/LeadsPages/Leads';
 import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
+import LeadDetails from '../pages/LeadsPages/LeadDetails';
 
 const Admin = ({ role }) => {
 
@@ -111,7 +112,7 @@ const Admin = ({ role }) => {
                         allLinks={allLinks}
                     />
                 </div>
-                <div className="flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5 menu">
+                <div className={`flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5 menu ${isExpanded ? "translate-x-0 w-full" : "w-72 lg:w-4/5"}`}>
                     <Routes>
                         <Route element={<CanAccessRoute module_name="Platforms" />}>
                             <Route path="platforms/view" element={<Platforms />} />
@@ -132,6 +133,7 @@ const Admin = ({ role }) => {
                         </Route>
                         <Route element={<CanAccessRoute module_name="Leads" />}>
                             <Route path="leads/view" element={<Leads />} />
+                            <Route path="leads/view/:id" element={<LeadDetails />} />
                             <Route path="leads/add" element={<AddUpdateLead />} />
                             <Route path="leads/update/:id" element={<AddUpdateLead />} />
                         </Route>

@@ -72,7 +72,7 @@ const LoadFrom = forwardRef(({ formFields, title, isLoading, formValues, setForm
     }));
 
 
-    const handleFieldChange = (name, value, type, multiple, isManual) => {
+    const handleFieldChange = (name, value, type, multiple, isManual, dynamicField) => {
         setFormValues((prev) => ({
             ...prev,
             [name]: value,
@@ -80,7 +80,10 @@ const LoadFrom = forwardRef(({ formFields, title, isLoading, formValues, setForm
                 [`add_mutiple_${name}_for_manage`]: true,
             }),
             ...(isManual && {
-                [`add_manully_${name}_for_manage`]: true,
+                [`add_manully_${name}_for_manage`]: {
+                    value: true,
+                    dynamicField
+                },
             }),
             [`${type}_${name}_for_manage`]: value
         }))
@@ -187,7 +190,7 @@ const LoadFrom = forwardRef(({ formFields, title, isLoading, formValues, setForm
                             placeholder={field.placeholder || `Select ${fieldLabel}`}
                             options={selectOptions}
                             value={formValues[fieldName]}
-                            onChange={(e) => handleFieldChange(fieldName, e, fieldType, field?.multipleSelect, field.manully)}
+                            onChange={(e) => handleFieldChange(fieldName, e, fieldType, field?.multipleSelect, field.manully, field.dynamic)}
                         />
                         <span className='text-red-500 text-sm'>{errorMsg}</span>
                     </div>

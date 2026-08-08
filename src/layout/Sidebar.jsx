@@ -74,7 +74,7 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
     const links = filterLinksByPermission(allLinks);
 
     return (
-        <div className="rounded-lg p-2 space-y-2 border border-borderColor bg-background h-full overflow-y-auto">
+        <div className="rounded-lg p-2 space-y-2 border border-borderColor bg-background h-full overflow-y-auto menu">
 
             {links.map((item, index) => {
                 // Group
@@ -94,10 +94,10 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
     `}
                             >
                                 <div className="flex items-center gap-3">
-                                    {item.icon && <item.icon className="text-xl" />}
+                                    {item.icon && <item.icon className="2xl:text-xl text-base" />}
 
                                     {!isExpanded && (
-                                        <span className="text-sm font-medium">
+                                        <span className="2xl:text-sm text-xs font-medium">
                                             {item.name}
                                         </span>
                                     )}
@@ -132,22 +132,22 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
                                                     ? "bg-primary text-white"
                                                     : "hover:bg-primary hover:text-white"
                                                 }
-                    flex items-center gap-3 rounded-md px-3 py-2 transition`
+                    flex items-center gap-3 rounded-md ${isExpanded ? 'justify-center' : ''} px-3 py-2 transition`
                                             }
                                         >
-                                            {child.icon && <child.icon className="text-lg" />}
+                                            {child.icon && <div className="2xl:text-xl text-base flex items-center"><child.icon /></div>}
 
                                             {!isExpanded && (
-                                                <span className="text-sm">
+                                                <span className="2xl:text-sm text-xs">
                                                     {child.name}
                                                 </span>
                                             )}
 
-                                            {isExpanded && (
+                                            {/* {isExpanded && (
                                                 <span className="text-sm lg:hidden">
                                                     {child.name}
                                                 </span>
-                                            )}
+                                            )} */}
                                         </NavLink>
                                     ))}
                                 </div>
@@ -167,41 +167,45 @@ const Sidebar = ({ isExpanded, toggleMenu, allLinks }) => {
                                 ? "bg-primary text-white"
                                 : "hover:bg-primary hover:text-white"
                             }
-                            flex items-center gap-3 rounded-md px-3 py-2 transition`
+                            flex items-center justify-between gap-3 rounded-md px-3 py-2 transition`
                         }
                     >
-                        <item.icon className="text-xl" />
+                        <div className="flex items-center gap-3">
+                            <item.icon className="2xl:text-xl text-base" />
 
-                        {!isExpanded && (
-                            <span className="text-sm font-medium">
-                                {item.name}
-                            </span>
-                        )}
+                            {!isExpanded && (
+                                <span className="2xl:text-sm text-xs font-medium">
+                                    {item.name}
+                                </span>
+                            )}
 
-                        {isExpanded && (
-                            <span className="text-sm font-medium lg:hidden">
-                                {item.name}
-                            </span>
-                        )}
+                            {isExpanded && (
+                                <span className="text-sm font-medium lg:hidden">
+                                    {item.name}
+                                </span>
+                            )}
+                        </div>
                     </NavLink>
                 );
             })}
 
             <button
                 onClick={logout}
-                className="w-full flex items-center gap-3 rounded-md px-3 py-2 hover:bg-primary hover:text-white transition"
+                className="w-full flex items-center justify-between gap-3 rounded-md px-3 py-2 hover:bg-primary hover:text-white transition"
             >
-                <MdLogout className="text-xl" />
+                <div className="flex items-center gap-3">
+                    <MdLogout className="2xl:text-xl text-base" />
 
-                {!isExpanded && (
-                    <span className="text-sm font-medium">Logout</span>
-                )}
+                    {!isExpanded && (
+                        <span className="2xl:text-sm text-xs font-medium">Logout</span>
+                    )}
 
-                {isExpanded && (
-                    <span className="text-sm font-medium lg:hidden">
-                        Logout
-                    </span>
-                )}
+                    {isExpanded && (
+                        <span className="text-sm font-medium lg:hidden">
+                            Logout
+                        </span>
+                    )}
+                </div>
             </button>
         </div>
     );

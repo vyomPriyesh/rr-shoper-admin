@@ -34,3 +34,7 @@ export const timeAgo = (date) => {
 export const displayDate = (date) => {
     return dayjs(date).format('DD-MM-YYYY')
 }
+
+export const displayDateTime = (date) => {
+    return dayjs(date).format('DD-MM-YYYY hh:mm A')
+}

@@ -102,17 +102,17 @@ const Leads = () => {
       key: inputColumns?.[2]?.title,
       render: (_, record) => record?.values?.input?.[2]?.value
     },
-    {
-      title: 'User',
-      dataIndex: 'user',
-      key: 'user',
-      render: (_, record) => record?.user?.name
+    user?.role === 'admin' && {
+      title: 'Created By',
+      dataIndex: 'created_by',
+      key: 'created_by',
+      render: (_, record) => record?.created_by?.name
     },
     {
       title: 'Assign User',
       dataIndex: 'assign_user',
       key: 'assign_user',
-      render: (_, record) => record?.assign_user?.name
+      render: (_, record) => record?.assign_user?.name || 'Un Assigned'
     },
     {
       title: 'Created At',
@@ -137,6 +137,7 @@ const Leads = () => {
           action
           callBack
           module_name='Leads'
+          viewClick={(data) => navigate(`/leads/view/${data?._id}`)}
           editClick={(data) => navigate(`/leads/update/${data?._id}`)}
         // deleteClick={(data) => handleDeleteUser(data._id)}
         />
