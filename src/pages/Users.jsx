@@ -40,16 +40,16 @@ const Users = () => {
         }
     })
 
-    const { mutate: updateUserDesignation, isPending: designationPending } = useMutation({
-        mutationFn: (payload) => api.get(users.updateDesignation(payload.id, payload.designationId)),
-        onSuccess: ({ data }) => {
-            showToast(data.message, "success");
-            allUsersRefetch()
-        },
-        onError: ({ response }) => {
-            showToast(response?.data?.error?.error_message || "Error updating designation", "error");
-        }
-    })
+    // const { mutate: updateUserDesignation, isPending: designationPending } = useMutation({
+    //     mutationFn: (payload) => api.get(users.updateDesignation(payload.id, payload.designationId)),
+    //     onSuccess: ({ data }) => {
+    //         showToast(data.message, "success");
+    //         allUsersRefetch()
+    //     },
+    //     onError: ({ response }) => {
+    //         showToast(response?.data?.error?.error_message || "Error updating designation", "error");
+    //     }
+    // })
 
     const { mutate: handleUserAction, isPending: userHandlePending } = useMutation({
         mutationFn: async () => {
@@ -106,20 +106,20 @@ const Users = () => {
             dataIndex: 'mobile',
             key: 'mobile',
         },
-        {
-            title: 'Designation',
-            dataIndex: 'designation',
-            key: 'designation',
-            render: (_, record) => (
-                <InputField
-                    type='drop-single-select'
-                    value={record?.designation?._id}
-                    options={options.designations}
-                    onChange={(e) => updateUserDesignation({ id: record?._id, designationId: e })}
-                    placeholder={record?.designation?.name || 'Select Designation'}
-                />
-            )
-        },
+        // {
+        //     title: 'Designation',
+        //     dataIndex: 'designation',
+        //     key: 'designation',
+        //     render: (_, record) => (
+        //         <InputField
+        //             type='drop-single-select'
+        //             value={record?.designation?._id}
+        //             options={options.designations}
+        //             onChange={(e) => updateUserDesignation({ id: record?._id, designationId: e })}
+        //             placeholder={record?.designation?.name || 'Select Designation'}
+        //         />
+        //     )
+        // },
         {
             title: 'Status',
             dataIndex: 'status',
@@ -178,13 +178,20 @@ const Users = () => {
                     ]}>
                         <InputField type='email' placeholder='Enter Email' />
                     </Form.Item>
+                    {!editId &&
+                        <Form.Item name='password' rules={[
+                            { required: true, message: 'Password is required' },
+                        ]}>
+                            <InputField type='password' placeholder='Enter Password' />
+                        </Form.Item>
+                    }
                     <Form.Item name='mobile' rules={[
                         { required: true, message: 'Mobile number is required' },
                         { len: 10, message: 'Enter valid 10-digit mobile number' }
                     ]}>
                         <InputField type='tel' maxLength={10} placeholder='Enter Mobile Number' />
                     </Form.Item>
-                    <Form.Item name='designation' rules={[{ required: true, message: 'Designation is required' }]}>
+                    <Form.Item name='designation' >
                         <InputField type='drop-single-select' options={options?.designations || []} placeholder='Select Designation' />
                     </Form.Item>
                 </Form>
