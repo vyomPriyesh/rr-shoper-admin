@@ -17,6 +17,7 @@ import {
     FaFileExcel,
     FaFilePowerpoint,
 } from "react-icons/fa";
+import Loader from './Loader';
 
 const ImagesUploadUi = ({
     multiple = false,
@@ -349,6 +350,7 @@ const ImagesUploadUi = ({
                     )}
             </Upload>
             <ImageWithPreview preview={preview} setPreview={setPreview} />
+            {isPending && <Loader/>}
         </div>
     );
 };
