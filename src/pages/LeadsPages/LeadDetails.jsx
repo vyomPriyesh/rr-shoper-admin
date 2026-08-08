@@ -5,10 +5,10 @@ import { useParams } from 'react-router-dom'
 import api from '../../config/api'
 import { useQuery } from '@tanstack/react-query'
 import PageTitleAddbtn from '../../utils/PageTitleAddbtn'
-import LeadDetailscopy from './LeadDetailscopy'
 import { FiCalendar, FiCheckCircle, FiMail, FiPhone, FiUser } from 'react-icons/fi'
 import { displayDateTime } from '../../utils/DateDisplay'
 import ImagesUploadUi from '../../utils/ImagesUploadUi'
+import Loader from '../../utils/Loader'
 
 const LeadDetails = () => {
 
@@ -73,6 +73,7 @@ const LeadDetails = () => {
 
     return (
         <>
+            {leadDetailsFetching && <Loader />}
             <div className='flex flex-col gap-5'>
                 <div className="bg-white p-5 rounded-lg">
                     <PageTitleAddbtn title={'Lead Details'} displayStatus={<StatusSection {...statusInfo} />} />
