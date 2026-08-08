@@ -24,6 +24,7 @@ import AddUpdateLeadForm from '../pages/LeadsPages/AddUpdateLeadForm';
 import Leads from '../pages/LeadsPages/Leads';
 import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
 import LeadDetails from '../pages/LeadsPages/LeadDetails';
+import Customers from '../pages/Customers';
 
 const Admin = ({ role }) => {
 
@@ -48,6 +49,10 @@ const Admin = ({ role }) => {
         },
         {
             name: 'Users', to: 'users/view', role: role,
+            icon: TbUsersGroup
+        },
+        {
+            name: 'Custmers', to: 'custmers/view', role: role,
             icon: TbUsersGroup
         },
         {
@@ -122,6 +127,9 @@ const Admin = ({ role }) => {
                         </Route>
                         <Route element={<CanAccessRoute module_name="Users" />}>
                             <Route path="users/view" element={<Users />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Customers" />}>
+                            <Route path="custmers/view" element={<Customers />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Tickets Title" />}>
                             <Route path="tickets/tickets-title/view" element={<TicketsTitle />} />

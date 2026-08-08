@@ -9,6 +9,14 @@ const apiList = () => {
             get: 'admin-all-options',
         },
 
+        customers: {
+            all: 'allCustomers',
+            add: 'customers/add-customer',
+            updateCustomer: (id) => `customers/update-customer/${id}`,
+            deleteCustomer: (id) => `customers/delete-customer/${id}`,
+            statusUpdate: (id) => `customers/update-status/${id}`,
+        },
+
         users: {
             all: 'allUsers',
             add: 'users/add-user',
