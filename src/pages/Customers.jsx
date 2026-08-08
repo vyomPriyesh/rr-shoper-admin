@@ -81,7 +81,7 @@ const Customers = () => {
                 return (
                     <div className="flex flex-row gap-3 place-items-center">
                         <div className='!w-12 rounded-full aspect-square overflow-hidden' >
-                            <Image src={record?.image?.image ? images.imgUrl + record?.image?.image : `https://ui-avatars.com/api/?background=B06A8D&color=fff&name=${record?.name}`} className='aspect-square w-full h-full object-cover'/>
+                            <Image src={record?.image?.image ? images.imgUrl + record?.image?.image : `https://ui-avatars.com/api/?background=B06A8D&color=fff&name=${record?.name}`} className='aspect-square w-full h-full object-cover' />
                         </div>
                         <span className='text-lg'>{record?.name}</span>
                     </div>
@@ -130,7 +130,9 @@ const Customers = () => {
             name: data.name,
             email: data.email,
             mobile: data.mobile,
-            designation: data.designation?._id
+            image: {
+                url: images.imgUrl + data.image.image
+            },
         })
     }
 
