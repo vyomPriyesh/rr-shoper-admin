@@ -21,6 +21,7 @@ const Users = () => {
     const [editId, setEditId] = useState(null)
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
+    const [isOpenPassModal, setIsOpenPassModal] = useState(false)
 
     const { data: { data: allUsers = [] } = {}, refetch: allUsersRefetch, isFetching: allUsersFetching } = useQuery({
         queryKey: ['all-users', pagination],
@@ -55,7 +56,7 @@ const Users = () => {
         mutationFn: async () => {
             const payload = await form.validateFields();
             payload.role = 'user';
-            const response = await api.post(editId ? users.updateUser(editId) : users.add, payload);
+            const response = await api.post(isOpenPassModal ? users.updateUserPassword(editId, payload.password) : editId ? users.updateUser(editId) : users.add, payload);
             return response.data;
         },
         onSuccess: ({ message }) => {
@@ -87,11 +88,13 @@ const Users = () => {
             title: 'User',
             dataIndex: 'name',
             key: 'name',
-            fixed:'start',
+            fixed: 'start',
             render: (_, record) => {
                 return (
                     <div className="flex flex-row gap-3 place-items-center">
-                        <Image src={images.imgUrl + record?.image?.image} className='!w-20' />
+                        <div className='!w-12 rounded-full aspect-square overflow-hidden' >
+                            <Image src={record?.image?.image ? images.imgUrl + record?.image?.image : `https://ui-avatars.com/api/?background=B06A8D&color=fff&name=${record?.name}`} className='aspect-square w-full h-full object-cover' />
+                        </div>
                         <span className='text-lg'>{record?.name}</span>
                     </div>
                 )
@@ -131,6 +134,7 @@ const Users = () => {
 
     const onCloseModal = () => {
         setEditId(null)
+        setIsOpenPassModal(false)
         setIsOpenAddModal(false)
         form.resetFields()
     }
@@ -152,6 +156,12 @@ const Users = () => {
         })
     }
 
+    const handlePassClick = (data) => {
+        setIsOpenPassModal(true)
+        setEditId(data._id)
+    }
+
+
     return (
         <div className='flex flex-col gap-5'>
             {userHandlePending && <Loader />}
@@ -166,35 +176,67 @@ const Users = () => {
                 callBack
                 module_name='Users'
                 editClick={handleEdit}
+                passClick={user?.role === 'admin' && handlePassClick}
                 deleteClick={(data) => handleDeleteUser(data._id)}
             />
-            <CommanModal title={editId ? 'Update User' : 'Add User'} open={isOpenAddModal} onDone={handleUserAction} onClose={onCloseModal}>
+            <CommanModal title={editId ? 'Update User' : 'Add User'} open={isOpenAddModal || isOpenPassModal} onDone={handleUserAction} onClose={onCloseModal}>
                 <Form form={form} className='flex flex-col gap-3'>
-                    <Form.Item name='name' rules={[{ required: true, message: 'Name is required' }]}>
-                        <InputField type='text' placeholder='Enter Name' />
-                    </Form.Item>
-                    <Form.Item name='email' rules={[
-                        { required: true, message: 'Email is required' },
-                        { type: 'email', message: 'Enter valid email' }
-                    ]}>
-                        <InputField type='email' placeholder='Enter Email' />
-                    </Form.Item>
-                    {!editId &&
+                    {!isOpenPassModal &&
+                        <>
+                            <Form.Item name='name' rules={[{ required: true, message: 'Name is required' }]}>
+                                <InputField type='text' placeholder='Enter Name' />
+                            </Form.Item>
+                            <Form.Item name='email' rules={[
+                                { required: true, message: 'Email is required' },
+                                { type: 'email', message: 'Enter valid email' }
+                            ]}>
+                                <InputField type='email' placeholder='Enter Email' />
+                            </Form.Item>
+                        </>
+                    }
+                    {(!editId || isOpenPassModal) &&
                         <Form.Item name='password' rules={[
                             { required: true, message: 'Password is required' },
                         ]}>
                             <InputField type='password' placeholder='Enter Password' />
                         </Form.Item>
                     }
-                    <Form.Item name='mobile' rules={[
-                        { required: true, message: 'Mobile number is required' },
-                        { len: 10, message: 'Enter valid 10-digit mobile number' }
-                    ]}>
-                        <InputField type='tel' maxLength={10} placeholder='Enter Mobile Number' />
-                    </Form.Item>
-                    <Form.Item name='designation' >
-                        <InputField type='drop-single-select' options={options?.designations || []} placeholder='Select Designation' />
-                    </Form.Item>
+                    {isOpenPassModal &&
+                        <Form.Item name='cpassword' dependencies={["password"]}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Confirm password is required",
+                                },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue("password") === value) {
+                                            return Promise.resolve();
+                                        }
+
+                                        return Promise.reject(
+                                            new Error("Passwords do not match")
+                                        );
+                                    },
+                                }),
+                            ]}
+                        >
+                            <InputField type='password' placeholder='Confirm Password' />
+                        </Form.Item>
+                    }
+                    {!isOpenPassModal &&
+                        <>
+                            <Form.Item name='mobile' rules={[
+                                { required: true, message: 'Mobile number is required' },
+                                { len: 10, message: 'Enter valid 10-digit mobile number' }
+                            ]}>
+                                <InputField type='tel' maxLength={10} placeholder='Enter Mobile Number' />
+                            </Form.Item>
+                            <Form.Item name='designation' >
+                                <InputField type='drop-single-select' options={options?.designations || []} placeholder='Select Designation' />
+                            </Form.Item>
+                        </>
+                    }
                 </Form>
             </CommanModal>
         </div>

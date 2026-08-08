@@ -21,6 +21,7 @@ const apiList = () => {
             all: 'allUsers',
             add: 'users/add-user',
             updateUser: (id) => `users/update-user/${id}`,
+            updateUserPassword: (id, password) => `users/update-user-password/${id}/${password}`,
             deleteUser: (id) => `users/delete-user/${id}`,
             updateRole: (id, role) => `users/update-role/${id}/${role}`,
             updateDesignation: (id, designation) => `users/update-designation/${id}/${designation}`,

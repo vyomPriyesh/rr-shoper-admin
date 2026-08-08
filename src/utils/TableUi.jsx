@@ -2,18 +2,18 @@ import { Popconfirm, Table } from 'antd'
 import React from 'react'
 import ButtonUi from './ButtonUi'
 import { MdOutlineEdit, MdRemoveRedEye } from 'react-icons/md'
-import { RiDeleteBin6Line } from 'react-icons/ri'
+import { RiDeleteBin6Line, RiLockPasswordFill } from 'react-icons/ri'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { userState } from '../context/UserContext'
 
-const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, callBack, gridLoading, module_name, ...rest }) => {
+const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, callBack, gridLoading, module_name, passClick, ...rest }) => {
 
     const { hasPermission } = userState();
 
     const navigate = useNavigate()
     const { pathname } = useLocation()
 
-    const handleRowAction = (type, click, data) => {
+    const handleRowAction = (click, data) => {
         if (callBack) {
             click(data)
         } else {
@@ -28,8 +28,9 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
             key: 'action',
             fixed: 'end',
             render: (_, record) => <div className="flex flex-row gap-4">
-                {(editClick && hasPermission(module_name, false, false, 'update')) && <ButtonUi onClick={() => handleRowAction('edit', editClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
-                {(viewClick && hasPermission(module_name, false, false, 'view')) && <ButtonUi onClick={() => handleRowAction('view', viewClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<MdRemoveRedEye />} />}
+                {(editClick && hasPermission(module_name, false, false, 'update')) && <ButtonUi onClick={() => handleRowAction(editClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
+                {(viewClick && hasPermission(module_name, false, false, 'view')) && <ButtonUi onClick={() => handleRowAction(viewClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<MdRemoveRedEye />} />}
+                {passClick && <ButtonUi onClick={() => handleRowAction(passClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<RiLockPasswordFill />} />}
                 {(deleteClick && hasPermission(module_name, false, false, 'delete')) &&
                     <Popconfirm title="Delete Platform" description="Are you sure to delete this Platform?" onConfirm={() => deleteClick(record)}>
                         <ButtonUi
