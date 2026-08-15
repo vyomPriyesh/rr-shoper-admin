@@ -101,11 +101,11 @@ const Platforms = () => {
         setEditId(data._id)
         onCloseModal()
         const imagesData = {
-            image: data.image.image,
-            name: data.image.image,
+            image: data?.image?.image,
+            name: data?.image?.image,
             status: "done",
-            uid: data.image._id,
-            url: images.imgUrl + data.image.image
+            uid: data?.image?._id,
+            url: images.imgUrl + data?.image?.image
         }
         form.setFieldsValue({
             name: data.name,
