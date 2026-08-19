@@ -75,7 +75,7 @@ const AddUpdateLeadForm = () => {
 
     return (
         <div className='space-y-5'>
-            {isSaving && <Loader />}
+            {isSaving && <Loader />} 
             <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={leadTitleUsed || isSaving || isleadFormFetching} />
             <div className='w-80'>
                 <InputField
