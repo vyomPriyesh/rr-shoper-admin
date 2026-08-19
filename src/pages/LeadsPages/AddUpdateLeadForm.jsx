@@ -11,7 +11,7 @@ import FormBuilder from '../../utils/FormBuilder';
 import Loader from '../../utils/Loader';
 
 const AddUpdateLeadForm = () => {
-    const { leadsForms } = apiList();
+    const { leadsForms, leads } = apiList();
     const { showToast } = useToast();
     const { user, options } = userState();
     const navigate = useNavigate();
@@ -38,6 +38,19 @@ const AddUpdateLeadForm = () => {
         }
     }, [leadFormData]);
 
+    const { data: leadTitleUsed, isPending: isLeadFormPending } = useQuery({
+        queryKey: ['lead-form', formName],
+        queryFn: () => api.get(leads.getFormsByLeadTitle(formName)),
+        enabled: !!user && !!formName,
+        select: ({ data }) => !!data?.data
+    });
+
+    useEffect(() => {
+        if (leadTitleUsed) {
+            showToast('This title is already used', 'error');
+        }
+    }, [leadTitleUsed])
+
 
     const payload = useMemo(() => ({
         leadTitle: formName,
@@ -63,7 +76,7 @@ const AddUpdateLeadForm = () => {
     return (
         <div className='space-y-5'>
             {isSaving && <Loader />}
-            <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={isSaving || isleadFormFetching} />
+            <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={leadTitleUsed || isSaving || isleadFormFetching} />
             <div className='w-80'>
                 <InputField
                     type='drop-single-select'
