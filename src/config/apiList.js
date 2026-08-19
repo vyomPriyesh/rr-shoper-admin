@@ -9,6 +9,8 @@ const apiList = () => {
             get: 'admin-all-options',
         },
 
+        exportFile: (name) => `export/${name}`,
+
         customers: {
             all: 'allCustomers',
             add: 'customers/add-customer',
