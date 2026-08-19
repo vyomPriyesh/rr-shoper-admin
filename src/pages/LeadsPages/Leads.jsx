@@ -1,17 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import PageTitleAddbtn from '../../utils/PageTitleAddbtn'
 import apiList from '../../config/apiList'
 import { userState } from '../../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 import api from '../../config/api'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import ButtonUi from '../../utils/ButtonUi'
 import TableUi from '../../utils/TableUi'
 import { displayDate } from '../../utils/DateDisplay'
 
 const Leads = () => {
 
-  const { leads } = apiList()
+  const { leads, exportFile } = apiList()
   const { user, hasPermission, options } = userState()
   // const { showToast } = useToast()
 
@@ -19,6 +19,13 @@ const Leads = () => {
 
   const [pagination, setPagination] = useState({ page: 1, limit: 10 });
   const [selectedStatus, setSelectedStatus] = useState(null)
+  const fileInputRef = useRef(null);
+
+  const handleImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   const payload = useMemo(() => {
     return {
@@ -122,10 +129,73 @@ const Leads = () => {
     },
   ].filter(list => list.title), [inputColumns])
 
+  const { mutate: handleExport } = useMutation({
+    mutationFn: (sample) => {
+      return api.post(exportFile("lead"), { sample, lead_form_id: '6a6d789a074fa8b351dfe027', ...payload }, {
+        responseType: "blob",
+      });
+    },
+
+    onSuccess: ({ data, headers }) => {
+      const blob = new Blob([data], {
+        type:
+          headers["content-type"] ||
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+
+      // Get filename from backend
+      const contentDisposition = headers["content-disposition"];
+
+      let fileName = "export.xlsx";
+
+      if (contentDisposition) {
+        const match = contentDisposition.match(
+          /filename="?([^"]+)"?/i
+        );
+
+        if (match?.[1]) {
+          fileName = match[1];
+        }
+      }
+
+      link.download = fileName;
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+    },
+  });
+
+  const otherButton = useMemo(() => {
+    return [
+      {
+        type: 'button',
+        addText: 'Export',
+        className: 'bg-green-500 border-0 hover:!bg-green-500 hover:text-white hover:scale-105',
+        onClick: () => handleExport(false)
+      },
+      {
+        type: 'button',
+        addText: 'Sample Import',
+        className: 'bg- border-0 hover:!bg-green-500 hover:text-white hover:scale-105',
+        onClick: () => handleExport(true)
+      },
+    ]
+  }, [])
+
   return (
     <div className='flex flex-col gap-5'>
       <div className="bg-white p-5 rounded-lg">
-        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} />
+        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} />
       </div>
       <div className="bg-white p-5 rounded-lg">
         <TableUi
