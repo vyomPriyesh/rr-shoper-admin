@@ -129,13 +129,13 @@ const AddUpdateLead = () => {
             newErrors.name = "Name is required";
         }
 
-        if (!formData?.email?.trim()) {
+        /*if (!formData?.email?.trim()) {
             newErrors.email = "Email is required";
         } else if (
             !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
         ) {
             newErrors.email = "Invalid email address";
-        }
+        }*/
 
         if (user?.role == 'admin' && !formData?.assign_user) {
             newErrors.assign_user = "Please select an assign person";
