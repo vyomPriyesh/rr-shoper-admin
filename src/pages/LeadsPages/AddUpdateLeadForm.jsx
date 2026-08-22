@@ -76,7 +76,7 @@ const AddUpdateLeadForm = () => {
     return (
         <div className='space-y-5'>
             {isSaving && <Loader />} 
-            <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={leadTitleUsed || isSaving || isleadFormFetching} />
+            <PageTitleAddbtn title={id ? 'Edit lead Form' : 'Add lead Form'} add addText='Save' addClick={() => saveleadForm()} disabled={isSaving || isleadFormFetching} />
             <div className='w-80'>
                 <InputField
                     type='drop-single-select'
