@@ -18,11 +18,12 @@ export const UserProvider = ({ children }) => {
     const isFetching = useIsFetching();
     const isMutating = useIsMutating();
 
-    const loading = isFetching > 0 || isMutating > 0;
+    const isLoading = isFetching > 0 || isMutating > 0;
 
     const [user, setUser] = useState(null);
     const [refresh, setRefresh] = useState(0);
     const [designation, setDesignation] = useState(null);
+    const [loading, setLoading] = useState(isLoading)
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -36,7 +37,7 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem("user");
     };
 
-    const { data: { data: { data: options = {} } = {} } = {}, isLoading } = useQuery({
+    const { data: { data: { data: options = {} } = {} } = {}, isLoading: optionsLoading } = useQuery({
         queryFn: () => api.get(allOptions.get)
     })
 
@@ -74,8 +75,8 @@ export const UserProvider = ({ children }) => {
     };
 
     return (
-        <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading, options, designation, setDesignation, hasPermission }}>
-            {isLoading && <Loader />}
+        <UserContext.Provider value={{ user, setUser, logout, refresh, setRefresh, loading, setLoading, options, designation, setDesignation, hasPermission }}>
+            {(optionsLoading || loading) && <Loader />}
             {children}
         </UserContext.Provider>
     );

@@ -16,7 +16,8 @@ const apiList = () => {
             add: 'customers/add-customer',
             updateCustomer: (id) => `customers/update-customer/${id}`,
             deleteCustomer: (id) => `customers/delete-customer/${id}`,
-            statusUpdate: (id) => `customers/update-status/${id}`,
+            customerStatusUpdate: (id) => `customers/update-status/${id}`,
+            customerDetailes: (id) => `customers/detailes/${id}`,
         },
 
         users: {

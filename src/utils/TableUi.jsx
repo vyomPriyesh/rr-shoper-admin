@@ -57,7 +57,7 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
         dataSource={data}
         loading={gridLoading}
         rowKey="_id"
-        scroll={{ x: 'max-content' }}
+        scroll={{ y: 500 }}
         pagination={pagination?.total > 10 &&
         {
             current: pagination.page,

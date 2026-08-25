@@ -46,6 +46,7 @@ const ImagesUploadUi = ({
             });
 
             return api.post(images.upload, formData, {
+                baseURL: `${import.meta.env.VITE_IMAGES_URL}/api/`,
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
@@ -350,7 +351,7 @@ const ImagesUploadUi = ({
                     )}
             </Upload>
             <ImageWithPreview preview={preview} setPreview={setPreview} />
-            {isPending && <Loader/>}
+            {isPending && <Loader />}
         </div>
     );
 };

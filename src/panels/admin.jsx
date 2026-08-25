@@ -24,7 +24,8 @@ import AddUpdateLeadForm from '../pages/LeadsPages/AddUpdateLeadForm';
 import Leads from '../pages/LeadsPages/Leads';
 import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
 import LeadDetails from '../pages/LeadsPages/LeadDetails';
-import Customers from '../pages/Customers';
+import Customers from '../pages/Customers/Customers'; 
+import CustomerDetails from '../pages/Customers/CustomerDetails';
 
 const Admin = ({ role }) => {
 
@@ -130,6 +131,7 @@ const Admin = ({ role }) => {
                         </Route>
                         <Route element={<CanAccessRoute module_name="Customers" />}>
                             <Route path="custmers/view" element={<Customers />} />
+                            <Route path="custmers/view/:id" element={<CustomerDetails />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Tickets Title" />}>
                             <Route path="tickets/tickets-title/view" element={<TicketsTitle />} />

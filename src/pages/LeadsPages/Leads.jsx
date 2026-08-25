@@ -7,7 +7,7 @@ import api from '../../config/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import ButtonUi from '../../utils/ButtonUi'
 import TableUi from '../../utils/TableUi'
-import { displayDate } from '../../utils/DateDisplay'
+import { displayDateTime } from '../../utils/DateDisplay'
 
 const Leads = () => {
 
@@ -125,11 +125,11 @@ const Leads = () => {
       title: 'Created At',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (value) => displayDate(value)
+      render: (value) => displayDateTime(value)
     },
   ].filter(list => list.title), [inputColumns])
 
-  const { mutate: handleExport } = useMutation({
+  const { mutate: handleExport, isPending: exportPending } = useMutation({
     mutationFn: (sample) => {
       return api.post(exportFile("lead"), { sample, lead_form_id: '6a6d789a074fa8b351dfe027', ...payload }, {
         responseType: "blob",

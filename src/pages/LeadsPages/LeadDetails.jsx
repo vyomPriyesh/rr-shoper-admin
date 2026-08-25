@@ -9,6 +9,7 @@ import { FiCalendar, FiCheckCircle, FiMail, FiPhone, FiUser } from 'react-icons/
 import { displayDateTime } from '../../utils/DateDisplay'
 import ImagesUploadUi from '../../utils/ImagesUploadUi'
 import Loader from '../../utils/Loader'
+import StatusSection from '../../utils/StatusSection'
 
 const LeadDetails = () => {
 
@@ -311,13 +312,6 @@ const LabelValue = ({ index, name, value }) => {
                 {renderValue(value)}
             </div>
         </div>
-    )
-}
-
-const StatusSection = ({ label, color, bgColor }) => {
-    return (label &&
-        <span className='inline-flex items-center gap-1.5 rounded-full px-2.5 py-1
-           2xl:text-sm xl:text-xs font-medium' style={{ color, backgroundColor: bgColor }}>{label}</span>
     )
 }
 

@@ -107,6 +107,7 @@ const AddUpdateLead = () => {
                 delete newErrors[key];
             } else {
                 // Add error if value is empty
+                if (key == 'email') return newErrors;
                 newErrors[key] = `${key
                     .replace("_", " ")
                     .replace(/\b\w/g, (c) => c.toUpperCase())} is required`;

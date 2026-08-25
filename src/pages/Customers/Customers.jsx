@@ -1,21 +1,24 @@
-import React, { useMemo, useState } from 'react'
-import PageTitleAddbtn from '../utils/PageTitleAddbtn'
+import React, { useEffect, useMemo, useState } from 'react'
+import PageTitleAddbtn from '../../utils/PageTitleAddbtn'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { userState } from '../context/UserContext';
-import { useToast } from '../context/ToastContext';
-import apiList from '../config/apiList';
-import api from '../config/api';
+import { userState } from '../../context/UserContext';
+import { useToast } from '../../context/ToastContext';
+import apiList from '../../config/apiList';
+import api from '../../config/api';
 import { Form, Image } from 'antd';
-import TableUi from '../utils/TableUi';
-import InputField from '../utils/InputField';
-import CommanModal from '../utils/CommanModal';
-import Loader from '../utils/Loader';
+import TableUi from '../../utils/TableUi';
+import InputField from '../../utils/InputField';
+import CommanModal from '../../utils/CommanModal';
+import Loader from '../../utils/Loader';
+import { useNavigate } from 'react-router-dom';
 
 const Customers = () => {
 
-    const { customers, designations, images } = apiList();
+    const { customers, images } = apiList();
     const { showToast } = useToast();
-    const { user, options, hasPermission } = userState();
+    const { user, hasPermission, setLoading } = userState();
+
+    const navigate = useNavigate();
 
     const [pagination, setPagination] = useState({ page: 1, limit: 10 })
     const [editId, setEditId] = useState(null)
@@ -32,7 +35,7 @@ const Customers = () => {
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
             setEditId(id)
-            return api.get(customers.statusUpdate(id))
+            return api.get(customers.customerStatusUpdate(id))
         },
         onSuccess: ({ data }) => {
             showToast(data.message, "success");
@@ -43,7 +46,7 @@ const Customers = () => {
     const { mutate: handleCustomerAction, isPending: customerHandlePending } = useMutation({
         mutationFn: async () => {
             const payload = await form.validateFields();
-            payload.image = payload.image.uid
+            payload.image = payload?.image?.uid
             const response = await api.post(editId ? customers.updateCustomer(editId) : customers.add, payload);
             return response.data;
         },
@@ -60,8 +63,8 @@ const Customers = () => {
         }
     })
 
-    const { mutate: handleDeleteCustomer } = useMutation({
-        mutationFn: (id) => api.delete(columns.deleteCustomer(id)),
+    const { mutate: handleDeleteCustomer, isPending: customerDeletePending } = useMutation({
+        mutationFn: (id) => api.delete(customers.deleteCustomer(id)),
         onSuccess: ({ data }) => {
             showToast(data.message, "success");
             allCustomersRefetch();
@@ -136,9 +139,15 @@ const Customers = () => {
         })
     }
 
+    const isLoading = useMemo(() => customerHandlePending || customerDeletePending, [customerHandlePending, customerDeletePending])
+
+    useEffect(() => {
+        if (isLoading == undefined || isLoading == null) return
+        setLoading(isLoading)
+    }, [isLoading])
+
     return (
         <div className='flex flex-col gap-5'>
-            {customerHandlePending && <Loader />}
             <PageTitleAddbtn title='Custmers' add={canAdd} addClick={handleAdd} />
             <TableUi
                 columns={columns}
@@ -150,6 +159,7 @@ const Customers = () => {
                 callBack
                 module_name='Custmers'
                 editClick={handleEdit}
+                viewClick={(data) => navigate(`/custmers/view/${data?._id}`)}
                 deleteClick={(data) => handleDeleteCustomer(data._id)}
             />
             <CommanModal title={editId ? 'Update Custmers' : 'Add Custmer'} open={isOpenAddModal} onDone={handleCustomerAction} onClose={onCloseModal}>
