@@ -95,19 +95,19 @@ const Leads = () => {
       title: inputColumns?.[0]?.title,
       dataIndex: inputColumns?.[0]?.title,
       key: inputColumns?.[0]?.title,
-      render: (_, record) => record?.values?.input?.[0]?.value
+      render: (_, record) => record?.values?.input?.find(list => list.name == inputColumns?.[0]?.title)?.value
     },
     {
       title: inputColumns?.[1]?.title,
       dataIndex: inputColumns?.[1]?.title,
       key: inputColumns?.[1]?.title,
-      render: (_, record) => record?.values?.input?.[1]?.value
+      render: (_, record) => record?.values?.input?.find(list => list.name == inputColumns?.[1]?.title)?.value
     },
     {
       title: inputColumns?.[2]?.title,
       dataIndex: inputColumns?.[2]?.title,
       key: inputColumns?.[2]?.title,
-      render: (_, record) => record?.values?.input?.[2]?.value
+      render: (_, record) => record?.values?.input?.find(list => list.name == inputColumns?.[2]?.title)?.value
     },
     user?.role === 'admin' && {
       title: 'Created By',
