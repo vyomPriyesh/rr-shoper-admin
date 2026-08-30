@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import PageTitleAddbtn from '../utils/PageTitleAddbtn'
 import apiList from '../config/apiList';
 import { useToast } from '../context/ToastContext';
@@ -9,7 +9,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../config/api';
 import InputField from '../utils/InputField';
 import ButtonUi from '../utils/ButtonUi';
-import { LuBadgePlus } from 'react-icons/lu';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import TableUi from '../utils/TableUi';
 import { BsPatchCheckFill } from 'react-icons/bs';
@@ -18,7 +17,7 @@ const Packages = () => {
 
     const { packages, images } = apiList();
     const { showToast } = useToast();
-    const { user, hasPermission, options } = userState();
+    const { user, hasPermission, options, setLoading } = userState();
 
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
     const [form] = Form.useForm();
@@ -40,7 +39,7 @@ const Packages = () => {
         select: ({ data }) => data
     })
 
-    const { mutate: handleAddPlatform } = useMutation({
+    const { mutate: handleAddPackage, isPending: AddPackagePending } = useMutation({
         mutationFn: async () => {
             try {
                 await form.validateFields()
@@ -57,6 +56,13 @@ const Packages = () => {
             allPackagesRefetch();
         }
     })
+
+    const isLoading = useMemo(() => AddPackagePending, [AddPackagePending])
+
+    useEffect(() => {
+        if (isLoading == undefined || isLoading == null) return
+        setLoading(isLoading)
+    }, [isLoading])
 
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
@@ -109,6 +115,7 @@ const Packages = () => {
             title: 'Platform',
             dataIndex: 'platform',
             key: 'platform',
+            width: 180,
             render: (_, record) => {
                 return (
                     <div className="flex flex-row gap-3 place-items-center">
@@ -122,6 +129,7 @@ const Packages = () => {
             title: 'Package Name',
             dataIndex: 'name',
             key: 'name',
+            render: (value) => options?.packageOrders?.find(list => list.value == value)?.label
         },
         {
             title: 'Services',
@@ -176,7 +184,7 @@ const Packages = () => {
                 deleteClick={handleDelete}
                 handlePagination={setPagination}
             />
-            <CommanModal title='Add Package' width={1000} open={isOpenAddModal} onDone={handleAddPlatform} onClose={() => setIsOpenAddModal(!isOpenAddModal)}>
+            <CommanModal title='Add Package' width={1000} open={isOpenAddModal} onDone={handleAddPackage} onClose={() => setIsOpenAddModal(!isOpenAddModal)}>
                 <Form form={form} className='flex flex-col gap-5'>
                     <div className="flex flex-row gap-5">
                         <Form.Item name='platform' className='w-full'
@@ -196,8 +204,9 @@ const Packages = () => {
                             ]}
                         >
                             <InputField
-                                type="text"
-                                placeholder="Enter Packages Name"
+                                type="drop-single-select"
+                                options={options?.packageOrders}
+                                placeholder="Select Packages Name"
                             />
                         </Form.Item>
                         <Form.Item name='price' className='w-full'

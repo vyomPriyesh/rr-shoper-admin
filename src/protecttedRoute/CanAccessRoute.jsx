@@ -10,7 +10,6 @@ const CanAccessRoute = ({ module_name }) => {
     const { designation, user, hasPermission } = userState()
 
     const [loading, setLoading] = useState(true);
-    const [accessDenied, setAccessDenied] = useState(false);
 
     useEffect(() => {
         if (user?.token) {
@@ -18,9 +17,10 @@ const CanAccessRoute = ({ module_name }) => {
         }
     }, [user?.token]);
 
-    if (loading || !designation) {
+    if (loading || (user?.role !== "admin" && !designation)) {
         return <Loader />;
     }
+    
     return hasPermission(module_name, true, true) ? <Outlet /> : null;
 };
 
