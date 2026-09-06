@@ -30,33 +30,16 @@ const Platforms = () => {
     }
 
     const { 
-    data: allPlatforms, 
+    const { 
+    data: { data: allPlatforms = {} } = {}, 
     refetch: allPlatformsRefetch, 
     isFetching: isAllPlatformsFetching 
 } = useQuery({
     queryKey: ['all-platforms', pagination],
     queryFn: () => api.post(platforms.all, pagination),
     enabled: !!user,
-    select: ({ data }) => {
-        const list = data?.data || [];
-
-        const sortedList = [...list].sort((a, b) => {
-            const aIndex = a?.platform?.index ?? a?.index;
-            const bIndex = b?.platform?.index ?? b?.index;
-
-            if (aIndex == null) return 1;
-            if (bIndex == null) return -1;
-
-            return Number(aIndex) - Number(bIndex);
-        });
-
-        return {
-            ...data,
-            data: sortedList,
-        };
-    }
+    select: ({ data }) => data
 });
-
 
 
     const { mutate: handleAddPlatform } = useMutation({
