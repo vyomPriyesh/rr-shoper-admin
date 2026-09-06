@@ -42,11 +42,22 @@ const Platforms = () => {
     enabled: !!user,
     select: ({ data }) => {
 
-        const resData = data?.data || [];
+        const resData = data?.data?.data || [];
+        const pagination = data?.data?.pagination || [];
+
+        const sortedData = resData.sort((a, b) => {
+            const aIndex = a?.index;
+            const bIndex = b?.index;
+
+            if (aIndex == null) return 1;
+            if (bIndex == null) return -1;
+
+            return Number(aIndex) - Number(bIndex);
+        });
         
         return {
-            ...data,
-          resData
+          data: sortedData,
+          pagination
         }
     }
 });
