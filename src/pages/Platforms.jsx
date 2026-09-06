@@ -54,7 +54,7 @@ const Platforms = () => {
         });
         return {
             ...data,
-            sortedData
+          //  sortedData
         }
     }
 });
