@@ -59,6 +59,8 @@ const Platforms = () => {
     }
 });
 
+    console.log(allPlatforms)
+
 
     const { mutate: handleAddPlatform } = useMutation({
         mutationFn: async () => {
