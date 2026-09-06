@@ -29,18 +29,22 @@ const Platforms = () => {
         form.resetFields()
     }
 
-    const { data: { data: allPlatforms = {} } = {}, refetch: allPlatformsRefetch, isFetching: isAllPlatformsFetching } = useQuery({
-        queryKey: ['all-platforms', pagination],
-        queryFn: () => api.post(platforms.all, pagination),
-        enabled: !!user,
-        select: (res) => {
+    const { 
+    data: allPlatforms, 
+    refetch: allPlatformsRefetch, 
+    isFetching: isAllPlatformsFetching 
+} = useQuery({
+    queryKey: ['all-platforms', pagination],
+    queryFn: () => api.post(platforms.all, pagination),
+    enabled: !!user,
+    select: (res) => {
         const payload = res?.data;
         const list = payload?.data || [];
 
-        // Sort the array by index
+        // Sort by platform.index
         const sortedData = [...list].sort((a, b) => {
-            const aIndex = a?.index;
-            const bIndex = b?.index;
+            const aIndex = a?.platform?.index ?? a?.index;
+            const bIndex = b?.platform?.index ?? b?.index;
 
             if (aIndex == null) return 1;
             if (bIndex == null) return -1;
@@ -52,8 +56,9 @@ const Platforms = () => {
             ...payload,
             data: sortedData,
         };
-        }
-    })
+    }
+});
+
 
     const { mutate: handleAddPlatform } = useMutation({
         mutationFn: async () => {
