@@ -89,6 +89,7 @@ const apiList = () => {
         platforms: {
             add: 'add-platform',
             all: 'all-platforms',
+            indexUpdate : 'platforms/update-index',
             updatePlatform: (id) => `platforms/update-platform/${id}`,
             statusUpdate: (id) => `platforms/update-status/${id}`,
             deletePlatform: (id) => `platforms/delete-platform/${id}`,
