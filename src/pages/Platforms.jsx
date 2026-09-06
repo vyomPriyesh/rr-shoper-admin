@@ -30,7 +30,6 @@ const Platforms = () => {
     }
 
     const { 
-    const { 
     data: { data: allPlatforms = {} } = {}, 
     refetch: allPlatformsRefetch, 
     isFetching: isAllPlatformsFetching 
