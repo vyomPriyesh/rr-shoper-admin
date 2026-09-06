@@ -30,7 +30,7 @@ const Platforms = () => {
     }
 
     const { 
-    data: { data: allPlatforms = {} } = {}, 
+    data: allPlatforms, 
     refetch: allPlatformsRefetch, 
     isFetching: isAllPlatformsFetching 
 } = useQuery({
@@ -52,7 +52,7 @@ const Platforms = () => {
 
         return {
             ...data,
-            // data: sortedList,
+            data: sortedList,
         };
     }
 });
