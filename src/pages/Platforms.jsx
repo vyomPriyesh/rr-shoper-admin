@@ -52,7 +52,7 @@ const Platforms = () => {
 
         return {
             ...data,
-            data: sortedList,
+            // data: sortedList,
         };
     }
 });
