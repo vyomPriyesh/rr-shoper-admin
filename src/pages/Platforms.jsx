@@ -136,7 +136,7 @@ const Platforms = () => {
     return (
         <div className='flex flex-col gap-5'>
             <pre style={{ backgroundColor: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
-  {JSON.stringify(allPlatforms?.sortedData, null, 2)}
+  {JSON.stringify(allPlatforms, null, 2)}
 </pre>
             <PageTitleAddbtn title='Platforms' add={canAdd} addClick={onCloseModal} />
             <TableUi
