@@ -29,11 +29,8 @@ const Platforms = () => {
         form.resetFields()
     }
 
-    const allPlatforms = {}
-
     const { 
-  //  data: { data: allPlatforms = {} } = {}, 
-        data,
+    data : allPlatforms = {},
     refetch: allPlatformsRefetch, 
     isFetching: isAllPlatformsFetching 
 } = useQuery({
@@ -141,9 +138,6 @@ const Platforms = () => {
     }
     return (
         <div className='flex flex-col gap-5'>
-            <pre style={{ backgroundColor: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
-  {JSON.stringify(data, null, 2)}
-</pre>
             <PageTitleAddbtn title='Platforms' add={canAdd} addClick={onCloseModal} />
             <TableUi
                 columns={columns}
