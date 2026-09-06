@@ -138,19 +138,40 @@ const Platforms = () => {
         }
     })
 
-    const handleDragEnd = ({ active, over }) => {
-        if (active && over && active.id !== over.id) {
-            setDataSource((prev) => {
-                const activeIndex = prev.findIndex((item) => item._id === active.id)
-                const overIndex = prev.findIndex((item) => item._id === over.id)
-                const newOrder = arrayMove(prev, activeIndex, overIndex)
-                
-                // Trigger backend update with reordered list
-                updateOrder(newOrder)
-                return newOrder
-            })
-        }
+    // 1. Mutation for index update API
+const { mutate: updateIndex } = useMutation({
+    mutationFn: (payload) => api.post(platforms.indexUpdate, payload),
+    onSuccess: ({ data }) => {
+        showToast(data?.message || "Order updated successfully", "success");
+        allPlatformsRefetch();
+    },
+    onError: (err) => {
+        showToast(err?.response?.data?.message || "Failed to update order", "error");
     }
+});
+
+// 2. Drag handle function that builds the payload
+const handleDragEnd = ({ active, over }) => {
+    if (active && over && active.id !== over.id) {
+        setDataSource((prev) => {
+            const activeIndex = prev.findIndex((item) => item._id === active.id);
+            const overIndex = prev.findIndex((item) => item._id === over.id);
+            const newOrder = arrayMove(prev, activeIndex, overIndex);
+
+            // Format payload as [{ id: "...", index: 0 }, ...]
+            const payload = newOrder.map((item, index) => ({
+                id: item._id,
+                index: index,
+            }));
+
+            // Call API mutation
+            updateIndex(payload);
+
+            return newOrder;
+        });
+    }
+};
+
 
     const { mutate: handleAddPlatform } = useMutation({
         mutationFn: async () => {
