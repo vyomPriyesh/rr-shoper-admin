@@ -43,18 +43,10 @@ const Platforms = () => {
     select: ({ data }) => {
 
         const resData = data?.data || [];
-        const sortedData = resData.sort((a, b) => {
-            const aIndex = a?.index;
-            const bIndex = b?.index;
-
-            if (aIndex == null) return 1;
-            if (bIndex == null) return -1;
-
-            return Number(aIndex) - Number(bIndex);
-        });
+        
         return {
             ...data,
-          //  sortedData
+          resData
         }
     }
 });
