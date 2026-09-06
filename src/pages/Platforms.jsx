@@ -37,7 +37,11 @@ const Platforms = () => {
     queryKey: ['all-platforms', pagination],
     queryFn: () => api.post(platforms.all, pagination),
     enabled: !!user,
-    select: ({ data }) => data
+    select: ({ data }) => {
+        return {
+            ...data
+        }
+    }
 });
 
 
@@ -120,7 +124,7 @@ const Platforms = () => {
     return (
         <div className='flex flex-col gap-5'>
             <pre style={{ backgroundColor: '#f4f4f4', padding: '10px', borderRadius: '5px' }}>
-  {JSON.stringify(allPlatforms, null, 2)}
+  {JSON.stringify(allPlatforms?.data, null, 2)}
 </pre>
             <PageTitleAddbtn title='Platforms' add={canAdd} addClick={onCloseModal} />
             <TableUi
