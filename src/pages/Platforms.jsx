@@ -33,7 +33,7 @@ const Platforms = () => {
 
     const { 
   //  data: { data: allPlatforms = {} } = {}, 
-        data
+        data,
     refetch: allPlatformsRefetch, 
     isFetching: isAllPlatformsFetching 
 } = useQuery({
