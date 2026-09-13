@@ -11,7 +11,7 @@ import { useToast } from '../../context/ToastContext'
 import { userState } from '../../context/UserContext'
 
 const TicketsTitle = () => {
-    const { tickets } = apiList()
+    const { ticketsTitle } = apiList()
     const { showToast } = useToast()
     const { user, hasPermission } = userState()
 
@@ -36,7 +36,7 @@ const TicketsTitle = () => {
 
     const { data: { data: allTicketsTitle = [] } = {}, refetch: allTicketsTitleRefetch, isFetching: isTicketsTitleFetching } = useQuery({
         queryKey: ['all-tickets-title', pagination],
-        queryFn: () => api.post(tickets.allTicketsTitle, pagination),
+        queryFn: () => api.post(ticketsTitle.allTicketsTitle, pagination),
         enabled: !!user,
         select: ({ data }) => data,
     })
@@ -44,7 +44,7 @@ const TicketsTitle = () => {
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
             setEditId(id)
-            return api.get(tickets.statusUpdate(id))
+            return api.get(ticketsTitle.statusUpdate(id))
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success')
@@ -59,7 +59,7 @@ const TicketsTitle = () => {
         mutationFn: async () => {
             const values = await form.validateFields()
             const payload = { title: values.title?.trim() }
-            return api.post(editId ? tickets.updateTicketsTitle(editId) : tickets.addTicketsTitle, payload)
+            return api.post(editId ? ticketsTitle.updateTicketsTitle(editId) : ticketsTitle.addTicketsTitle, payload)
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success')
@@ -72,7 +72,7 @@ const TicketsTitle = () => {
     })
 
     const { mutate: handleDelete } = useMutation({
-        mutationFn: ({ _id }) => api.delete(tickets.deleteTicketsTitle(_id)),
+        mutationFn: ({ _id }) => api.delete(ticketsTitle.deleteTicketsTitle(_id)),
         onSuccess: ({ data }) => {
             showToast(data.message, 'success')
             allTicketsTitleRefetch()

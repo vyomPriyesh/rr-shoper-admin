@@ -10,7 +10,7 @@ import { useToast } from '../../context/ToastContext';
 import InputField from '../../utils/InputField';
 
 const TicketForms = () => {
-    const { tickets } = apiList();
+    const { ticketsForm } = apiList();
     const { showToast } = useToast();
     const { user, hasPermission } = userState();
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ const TicketForms = () => {
 
     const { data: { data: allTicketForms = [] } = {}, refetch: allTicketFormsRefetch, isFetching: isTicketFormsFetching } = useQuery({
         queryKey: ['all-ticket-forms', pagination],
-        queryFn: () => api.post(tickets.allTicketForms, pagination),
+        queryFn: () => api.post(ticketsForm.allTicketForms, pagination),
         enabled: !!user,
         select: ({ data }) => data,
     });
@@ -28,7 +28,7 @@ const TicketForms = () => {
     const { mutate: changeStatus, isPending: statusPending } = useMutation({
         mutationFn: (id) => {
             setEditId(id);
-            return api.get(tickets.updateTicketFormStatus(id));
+            return api.get(ticketsForm.updateTicketFormStatus(id));
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success');
@@ -40,7 +40,7 @@ const TicketForms = () => {
     });
 
     const { mutate: handleDelete } = useMutation({
-        mutationFn: ({ _id }) => api.delete(tickets.deleteTicketForm(_id)),
+        mutationFn: ({ _id }) => api.delete(ticketsForm.deleteTicketForm(_id)),
         onSuccess: ({ data }) => {
             showToast(data.message, 'success');
             allTicketFormsRefetch();

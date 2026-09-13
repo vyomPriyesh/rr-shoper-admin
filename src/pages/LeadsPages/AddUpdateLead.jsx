@@ -160,7 +160,7 @@ const AddUpdateLead = () => {
         }
     };
 
-    const StatusSection = () => {
+    const StatusInput = () => {
         return (id &&
             <div className="w-60">
                 <InputField
@@ -182,7 +182,7 @@ const AddUpdateLead = () => {
                     title={id ? 'Edit lead' : 'Add lead'}
                     add addText='Save'
                     addClick={handleSave}
-                    displayStatus={<StatusSection />}
+                    displayStatus={<StatusInput />}
                 />
             </div>
             <div className="bg-white rounded-lg p-3 grid grid-cols-3 gap-5">

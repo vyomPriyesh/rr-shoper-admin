@@ -26,6 +26,9 @@ import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
 import LeadDetails from '../pages/LeadsPages/LeadDetails';
 import Customers from '../pages/Customers/Customers'; 
 import CustomerDetails from '../pages/Customers/CustomerDetails';
+import { IoTicketSharp } from 'react-icons/io5';
+import Tickets from '../pages/TicketsPages/Tickets';
+import TicketDetails from '../pages/TicketsPages/TicketDetails';
 
 const Admin = ({ role }) => {
 
@@ -64,6 +67,11 @@ const Admin = ({ role }) => {
             name: "Tickets",
             icon: FaWpforms,
             children: [
+                {
+                    name: "Tickets",
+                    to: "tickets/view",
+                    icon: IoTicketSharp,
+                },
                 {
                     name: "Tickets Title",
                     to: "tickets/tickets-title/view",
@@ -132,6 +140,10 @@ const Admin = ({ role }) => {
                         <Route element={<CanAccessRoute module_name="Customers" />}>
                             <Route path="custmers/view" element={<Customers />} />
                             <Route path="custmers/view/:id" element={<CustomerDetails />} />
+                        </Route>
+                        <Route element={<CanAccessRoute module_name="Tickets" />}>
+                            <Route path="tickets/view" element={<Tickets />} />
+                            <Route path="tickets/view/:id" element={<TicketDetails />} />
                         </Route>
                         <Route element={<CanAccessRoute module_name="Tickets Title" />}>
                             <Route path="tickets/tickets-title/view" element={<TicketsTitle />} />

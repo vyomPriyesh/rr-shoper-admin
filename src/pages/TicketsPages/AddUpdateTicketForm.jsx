@@ -10,7 +10,7 @@ import { userState } from '../../context/UserContext';
 import FormBuilder from '../../utils/FormBuilder';
 
 const AddUpdateTicketForm = () => {
-    const { tickets } = apiList();
+    const { ticketsForm } = apiList();
     const { showToast } = useToast();
     const { user, options } = userState();
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ const AddUpdateTicketForm = () => {
 
     const { data: ticketFormData, isFetching: isTicketFormFetching } = useQuery({
         queryKey: ['ticket-form-edit', id],
-        queryFn: () => api.get(tickets.getTicketForm(id)),
+        queryFn: () => api.get(ticketsForm.getTicketForm(id)),
         enabled: !!id && !!user,
         select: ({ data }) => data?.data,
     });
@@ -46,9 +46,9 @@ const AddUpdateTicketForm = () => {
     const { mutate: saveTicketForm, isPending: isSaving } = useMutation({
         mutationFn: () => {
             if (id) {
-                return api.post(tickets.updateTicketForm(id), payload);
+                return api.post(ticketsForm.updateTicketForm(id), payload);
             }
-            return api.post(tickets.addTicketForm, payload);
+            return api.post(ticketsForm.addTicketForm, payload);
         },
         onSuccess: ({ data }) => {
             showToast(data.message, 'success');

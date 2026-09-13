@@ -32,11 +32,21 @@ const apiList = () => {
         },
 
         tickets: {
+            allTickets: 'user/allTickets',
+            getTicket: (id) => `ticket/${id}`,
+            comments: (ticketId) => `ticket/comments/${ticketId}`,
+            updateTicketStatus: (status, id) => `ticket/updateTicketStatus/${status}/${id}`
+        },
+
+        ticketsTitle: {
             allTicketsTitle: 'allTicketsTitle',
             addTicketsTitle: 'tickets-title/add-tickets-title',
             updateTicketsTitle: (id) => `tickets-title/update-tickets-title/${id}`,
             deleteTicketsTitle: (id) => `tickets-title/delete-tickets-title/${id}`,
             statusUpdate: (id) => `tickets-title/update-status/${id}`,
+        },
+
+        ticketsForm: {
             allTicketForms: 'allTicketForm',
             addTicketForm: 'ticket-form/add-ticket-form',
             updateTicketForm: (id) => `ticket-form/update-ticket-form/${id}`,
@@ -89,7 +99,7 @@ const apiList = () => {
         platforms: {
             add: 'add-platform',
             all: 'all-platforms',
-            indexUpdate : 'platforms/update-index',
+            indexUpdate: 'platforms/update-index',
             updatePlatform: (id) => `platforms/update-platform/${id}`,
             statusUpdate: (id) => `platforms/update-status/${id}`,
             deletePlatform: (id) => `platforms/delete-platform/${id}`,

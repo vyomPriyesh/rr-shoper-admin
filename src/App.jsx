@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
@@ -9,12 +9,33 @@ import { userState } from './context/UserContext'
 import Admin from './panels/admin'
 import ProtectedRoute from './protecttedRoute/ProtectedRoute'
 import Loader from './utils/Loader'
+import { socket } from './config/socket'
 
 function App() {
 
   const { user, loading } = userState();
 
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!user?.token) {
+      socket.disconnect();
+      return;
+    }
+
+    socket.auth = {
+      auth_id: user?._id,
+      role: user?.role,
+    };
+
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    return () => {
+      // socket.disconnect();
+    };
+  }, [user?._id]);
 
   return (
     <>

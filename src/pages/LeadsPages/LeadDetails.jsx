@@ -13,8 +13,8 @@ import StatusSection from '../../utils/StatusSection'
 
 const LeadDetails = () => {
 
-    const { leads, images } = apiList()
-    const { user, hasPermission, options } = userState()
+    const { leads } = apiList()
+    const { user, options } = userState()
 
     const { id } = useParams();
 
@@ -26,42 +26,6 @@ const LeadDetails = () => {
     });
 
     const { values, customer, created_by, assign_user, status, createdAt } = useMemo(() => leadDetails, [leadDetails])
-
-    const selectValue = useCallback((list = {}) => {
-        const { extraField, value } = list
-        if (extraField?.add_mutiple) {
-            if (extraField?.add_manully?.value) {
-                const dynamicData = options[extraField?.add_manully?.dynamicField]
-                let populatedValue = []
-                for (const item of value) {
-                    const optionValue = dynamicData?.find(row => row?.value == item)
-                    populatedValue.push(optionValue?.label)
-                }
-                return populatedValue
-            }
-            return value
-        } else {
-            return value
-        }
-    }, [options])
-
-    const statusObject = useMemo(() => options?.ticketStatuses?.reduce((acc, status) => {
-        acc[status.value] = status;
-        return acc;
-    }, {}), [options?.ticketStatuses])
-
-    const getStatus = useCallback((status) => {
-        if (!statusObject) return
-        return (
-            statusObject[status] || {
-                label: status || "Unknown",
-                color: "#f3f4f6",
-                bgColor: "#f3f4f6",
-            }
-        );
-    }, [statusObject])
-
-    const statusInfo = useMemo(() => getStatus(status) || {}, [status, getStatus]);
 
     const allDetails = useMemo(() => {
         return [
@@ -77,13 +41,13 @@ const LeadDetails = () => {
             {leadDetailsFetching && <Loader />}
             <div className='flex flex-col gap-5'>
                 <div className="bg-white p-5 rounded-lg">
-                    <PageTitleAddbtn title={'Lead Details'} displayStatus={<StatusSection {...statusInfo} />} />
+                    <PageTitleAddbtn title={'Lead Details'} displayStatus={<StatusSection status={status} />} />
                 </div>
                 <div className="rounded-lg flex flex-col gap-5">
                     <div className="flex flex-row gap-5">
                         <SummaryCard
                             label="Lead Status"
-                            value={statusInfo.label}
+                            value={options?.ticketStatuses?.find(list => list.value == status)?.label}
                             icon={<FiCheckCircle size={18} />}
                             iconClass="bg-blue-50 text-blue-600"
                         />
@@ -126,7 +90,6 @@ const LeadDetails = () => {
                         <div className="w-1/3 flex flex-col gap-5">
                             <PersonCard
                                 title="Customer"
-                                subtitle="Customer associated with this lead"
                                 person={customer}
                                 fallbackName="Customer"
                             />
@@ -138,7 +101,6 @@ const LeadDetails = () => {
                             />
                             <PersonCard
                                 title="Assigned To"
-                                subtitle="Current lead owner"
                                 person={assign_user}
                                 fallbackName="Sales Executive"
                                 role="Sales Executive"
