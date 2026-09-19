@@ -19,13 +19,6 @@ const Leads = () => {
 
   const [pagination, setPagination] = useState({ page: 1, limit: 10 });
   const [selectedStatus, setSelectedStatus] = useState(null)
-  const fileInputRef = useRef(null);
-
-  const handleImport = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
 
   const payload = useMemo(() => {
     return {

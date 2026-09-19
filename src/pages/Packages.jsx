@@ -107,6 +107,7 @@ const Packages = () => {
             name: data.name,
             price: data.price,
             services: data.services,
+            validity: data.validity,
         })
     }
 
@@ -130,6 +131,12 @@ const Packages = () => {
             dataIndex: 'name',
             key: 'name',
             render: (value) => options?.packageOrders?.find(list => list.value == value)?.label
+        },
+        {
+            title: 'Package Name',
+            dataIndex: 'validity',
+            key: 'validity',
+            render: (value) => options?.validityOptions?.find(list => list.value == value)?.label || '-'
         },
         {
             title: 'Services',
@@ -196,6 +203,17 @@ const Packages = () => {
                                 type="drop-single-select"
                                 options={options?.platforms}
                                 placeholder="Select Platform"
+                            />
+                        </Form.Item>
+                        <Form.Item name='validity' className='w-full'
+                            rules={[
+                                { required: true, message: "Validity is required" },
+                            ]}
+                        >
+                            <InputField
+                                type="drop-single-select"
+                                options={options?.validityOptions}
+                                placeholder="Select Validity"
                             />
                         </Form.Item>
                         <Form.Item name='name' className='w-full'
