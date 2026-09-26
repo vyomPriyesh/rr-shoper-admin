@@ -183,6 +183,7 @@ const Platforms = () => {
             return api.get(platforms.statusUpdate(id))
         },
         onSuccess: ({ data }) => {
+            setEditId(null)
             showToast(data.message, "success")
             allPlatformsRefetch()
         }
