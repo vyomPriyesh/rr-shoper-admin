@@ -125,59 +125,46 @@ const Platforms = () => {
         }
     }, [allPlatforms])
 
-    // Mutation to update row order on the backend
-    const { mutate: updateOrder } = useMutation({
-        mutationFn: (updatedList) => {
-            // Replace with your backend reorder endpoint if available
-            // e.g., return api.post(platforms.reorder, { items: updatedList })
-            return Promise.resolve()
-        },
-        onSuccess: () => {
-            showToast("Order updated successfully", "success")
-            allPlatformsRefetch()
-        }
-    })
-
     // 1. Mutation for index update API
-const { mutate: updateIndex } = useMutation({
-    mutationFn: (payload) => api.post(platforms.indexUpdate, payload),
-    onSuccess: ({ data }) => {
-        showToast(data?.message || "Order updated successfully", "success");
-        allPlatformsRefetch();
-    },
-    onError: (err) => {
-        showToast(err?.response?.data?.message || "Failed to update order", "error");
-    }
-});
+    const { mutate: updateIndex } = useMutation({
+        mutationFn: (payload) => api.post(platforms.indexUpdate, payload),
+        onSuccess: ({ data }) => {
+            showToast(data?.message || "Order updated successfully", "success");
+            allPlatformsRefetch();
+        },
+        onError: (err) => {
+            showToast(err?.response?.data?.message || "Failed to update order", "error");
+        }
+    });
 
-// 2. Drag handle function that builds the payload
-const handleDragEnd = ({ active, over }) => {
-    if (active && over && active.id !== over.id) {
-        setDataSource((prev) => {
-            const activeIndex = prev.findIndex((item) => item._id === active.id);
-            const overIndex = prev.findIndex((item) => item._id === over.id);
-            const newOrder = arrayMove(prev, activeIndex, overIndex);
+    // 2. Drag handle function that builds the payload
+    const handleDragEnd = ({ active, over }) => {
+        if (active && over && active.id !== over.id) {
+            setDataSource((prev) => {
+                const activeIndex = prev.findIndex((item) => item._id === active.id);
+                const overIndex = prev.findIndex((item) => item._id === over.id);
+                const newOrder = arrayMove(prev, activeIndex, overIndex);
 
-            // Format payload as [{ id: "...", index: 0 }, ...]
-            const payload = newOrder.map((item, index) => ({
-                id: item._id,
-                index: index,
-            }));
+                // Format payload as [{ id: "...", index: 0 }, ...]
+                const payload = newOrder.map((item, index) => ({
+                    id: item._id,
+                    index: index,
+                }));
 
-            // Call API mutation
-            updateIndex(payload);
+                // Call API mutation
+                updateIndex(payload);
 
-            return newOrder;
-        });
-    }
-};
+                return newOrder;
+            });
+        }
+    };
 
 
     const { mutate: handleAddPlatform } = useMutation({
         mutationFn: async () => {
             try {
                 await form.validateFields()
-                const response = await api.post(editId ? platforms.updatePlatform(editId) : platforms.add, values)
+                const response = await api.post(editId ? platforms.updatePlatform(editId) : platforms.add, { ...values, image: values?.images?.uid })
                 return response.data
             } catch (err) {
                 console.error(err)
@@ -232,14 +219,14 @@ const handleDragEnd = ({ active, over }) => {
             dataIndex: 'status',
             key: 'status',
             render: (_, record) => (
-                <Switch 
-                    loading={isPending && record?._id === editId} 
-                    checkedChildren="Active" 
-                    unCheckedChildren="Unactive" 
-                    checked={record?.status} 
-                    onChange={() => changeStatus(record?._id)} 
-                    size="medium" 
-                    className='bg-gray-300 [&.ant-switch-checked]:!bg-primary' 
+                <Switch
+                    loading={isPending && record?._id === editId}
+                    checkedChildren="Active"
+                    unCheckedChildren="Unactive"
+                    checked={record?.status}
+                    onChange={() => changeStatus(record?._id)}
+                    size="medium"
+                    className='bg-gray-300 [&.ant-switch-checked]:!bg-primary'
                 />
             ),
         },
@@ -264,7 +251,7 @@ const handleDragEnd = ({ active, over }) => {
     return (
         <div className='flex flex-col gap-5'>
             <PageTitleAddbtn title='Platforms' add={canAdd} addClick={onCloseModal} />
-            
+
             <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={handleDragEnd}>
                 <SortableContext
                     items={dataSource.map((i) => i._id)}

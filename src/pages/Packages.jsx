@@ -105,9 +105,10 @@ const Packages = () => {
         form.setFieldsValue({
             platform: data.platform?._id,
             name: data.name,
-            price: data.price,
+            onetime_price: data.onetime_price,
+            month_price: data.month_price,
+            year_price: data.year_price,
             services: data.services,
-            validity: data.validity,
         })
     }
 
@@ -133,12 +134,6 @@ const Packages = () => {
             render: (value) => options?.packageOrders?.find(list => list.value == value)?.label
         },
         {
-            title: 'Package Name',
-            dataIndex: 'validity',
-            key: 'validity',
-            render: (value) => options?.validityOptions?.find(list => list.value == value)?.label || '-'
-        },
-        {
             title: 'Services',
             dataIndex: 'services',
             key: 'services',
@@ -158,9 +153,10 @@ const Packages = () => {
             </Popover>
         },
         {
-            title: 'Price',
+            title: 'Price Life Time/Month/Year',
             dataIndex: 'price',
             key: 'price',
+            render: (_, record) => `${record?.onetime_price}/${record?.month_price}/${record?.year_price}`
         },
         {
             title: 'Status',
@@ -205,17 +201,6 @@ const Packages = () => {
                                 placeholder="Select Platform"
                             />
                         </Form.Item>
-                        <Form.Item name='validity' className='w-full'
-                            rules={[
-                                { required: true, message: "Validity is required" },
-                            ]}
-                        >
-                            <InputField
-                                type="drop-single-select"
-                                options={options?.validityOptions}
-                                placeholder="Select Validity"
-                            />
-                        </Form.Item>
                         <Form.Item name='name' className='w-full'
                             rules={[
                                 { required: true, message: "Packages Name is required" },
@@ -224,17 +209,33 @@ const Packages = () => {
                             <InputField
                                 type="drop-single-select"
                                 options={options?.packageOrders}
-                                placeholder="Select Packages Name"
+                                placeholder="Select Packages"
                             />
                         </Form.Item>
-                        <Form.Item name='price' className='w-full'
+                        <Form.Item name='onetime_price' className='w-full'>
+                            <InputField
+                                type="number"
+                                placeholder="Enter One Time Price"
+                            />
+                        </Form.Item>
+                        <Form.Item name='month_price' className='w-full'
                             rules={[
-                                { required: true, message: "Price is required" },
+                                { required: true, message: "Month Price is required" },
                             ]}
                         >
                             <InputField
                                 type="number"
-                                placeholder="Enter Price"
+                                placeholder="Enter Month Price"
+                            />
+                        </Form.Item>
+                        <Form.Item name='year_price' className='w-full'
+                            rules={[
+                                { required: true, message: "Year Price is required" },
+                            ]}
+                        >
+                            <InputField
+                                type="number"
+                                placeholder="Enter Year Price"
                             />
                         </Form.Item>
                     </div>
