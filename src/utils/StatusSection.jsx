@@ -1,14 +1,12 @@
 import React, { useCallback, useMemo } from 'react'
 import { userState } from '../context/UserContext';
 
-const StatusSection = ({ status }) => {
+const StatusSection = ({ status, options }) => {
 
-    const { options } = userState()
-
-    const statusObject = useMemo(() => options?.ticketStatuses?.reduce((acc, status) => {
+    const statusObject = useMemo(() => options?.reduce((acc, status) => {
         acc[status.value] = status;
         return acc;
-    }, {}), [options?.ticketStatuses])
+    }, {}), [options])
 
     const getStatus = useCallback((status) => {
         if (!statusObject) return

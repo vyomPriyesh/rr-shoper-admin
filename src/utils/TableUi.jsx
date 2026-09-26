@@ -26,7 +26,7 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
             title: 'Action',
             dataIndex: 'action',
             key: 'action',
-            fixed: 'end',
+            width: 250,
             render: (_, record) => <div className="flex flex-row gap-4">
                 {(editClick && hasPermission(module_name, false, false, 'update')) && <ButtonUi onClick={() => handleRowAction(editClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-blue-500 !bg-white !border-blue-500 hover:!bg-blue-500 hover:!text-white' text={<MdOutlineEdit />} />}
                 {(viewClick && hasPermission(module_name, false, false, 'view')) && <ButtonUi onClick={() => handleRowAction(viewClick, record)} className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-green-500 !bg-white !border-green-500 hover:!bg-green-500 hover:!text-white' text={<MdRemoveRedEye />} />}
@@ -36,7 +36,6 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
                         <ButtonUi
                             className='aspect-square !h-10 !w-10 !p-0 flex justify-center items-center text-xl !text-red-500 !bg-white !border-red-500 hover:!bg-red-500 hover:!text-white'
                             text={<RiDeleteBin6Line />}
-
                         />
                     </Popconfirm>
                 }
