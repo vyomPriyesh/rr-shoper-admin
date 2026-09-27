@@ -10,6 +10,7 @@ const apiList = () => {
         },
 
         exportFile: (name) => `export/${name}`,
+        importFile: (name) => `import/${name}`,
 
         customers: {
             all: 'allCustomers',

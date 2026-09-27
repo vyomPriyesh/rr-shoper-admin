@@ -188,7 +188,7 @@ const Leads = () => {
   return (
     <div className='flex flex-col gap-5'>
       <div className="bg-white p-5 rounded-lg">
-        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} />
+        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} importButton={true} exportApiName='leads' />
       </div>
       <div className="bg-white p-5 rounded-lg">
         <TableUi

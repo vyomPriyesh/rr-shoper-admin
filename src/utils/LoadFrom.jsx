@@ -1,7 +1,7 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react'
 import InputField from './InputField'
 import { userState } from '../context/UserContext'
-import dayjs from 'dayjs'
+import { displayDate, normalDateFormat } from './DateDisplay'
 
 const normalizeFormFields = (payload) => {
     if (Array.isArray(payload)) return payload
@@ -173,9 +173,9 @@ const LoadFrom = forwardRef(({ formFields, title, isLoading, formValues, setForm
                             type='date'
                             label={fieldLabel}
                             placeholder={field.placeholder || `Select ${fieldLabel}`}
-                            value={formValues[fieldName]}
+                            value={normalDateFormat(formValues[fieldName])}
                             format='DD-MM-YYYY'
-                            onChange={(e) => handleFieldChange(fieldName, dayjs(e).format('DD-MM-YYYY'), fieldType)}
+                            onChange={(e) => handleFieldChange(fieldName, displayDate(e), fieldType)}
                         />
                         <span className='text-red-500 text-sm'>{errorMsg}</span>
                     </div>
@@ -251,7 +251,7 @@ const LoadFrom = forwardRef(({ formFields, title, isLoading, formValues, setForm
                     </div>
                 )
         }
-    }, [formValues, handleFieldChange, options])
+    }, [formValues, handleFieldChange, options, normalDateFormat, displayDate])
 
 
     return (

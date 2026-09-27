@@ -1,8 +1,13 @@
 import React, { useRef } from 'react'
 import ButtonUi from './ButtonUi'
 import * as XLSX from 'xlsx';
+import apiList from '../config/apiList';
+import api from '../config/api';
+import { displayDate } from './DateDisplay';
 
-const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButtons = [], importButton, displayStatus, ...rest }) => {
+const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButtons = [], importButton, displayStatus, exportApiName, ...rest }) => {
+
+    const { importFile } = apiList()
 
     const fileInputRef = useRef(null);
 
@@ -25,9 +30,25 @@ const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButton
             const wsname = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[wsname];
 
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 2 });
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                header: 2,
+                raw: false,
+                dateNF: "dd-mm-yyyy",
+            });
 
-            const res = await apiPost(exportApi.dataCheck(exportApiName), { data: jsonData })
+            const formattedData = jsonData.map((row) => {
+                const formattedRow = { ...row };
+
+                Object.keys(formattedRow).forEach((key) => {
+                    if (key.endsWith("_date")) {
+                        formattedRow[key] = displayDate(formattedRow[key]);
+                    }
+                });
+
+                return formattedRow;
+            });
+
+            const res = await api.post(importFile(exportApiName), { data: formattedData })
             if (res.success) {
                 importClick(res.data.result)
             }
@@ -56,7 +77,7 @@ const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButton
                             ref={fileInputRef}
                             className='hidden'
                             accept=".xls,.xlsx,.xlsm,.xlsb,.csv"
-                        onChange={(e) => handleFileUpload(e)}
+                            onChange={(e) => handleFileUpload(e)}
                         />
                     </>
                 }

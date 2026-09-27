@@ -7,6 +7,7 @@ import { LuEye } from 'react-icons/lu';
 import { MdOutlineEdit } from 'react-icons/md';
 import { RiDeleteBin6Line, RiUploadCloud2Fill } from 'react-icons/ri';
 import ImagesUploadUi from './ImagesUploadUi';
+import dayjs from 'dayjs';
 const { TextArea } = Input;
 
 
@@ -131,6 +132,7 @@ const InputField = (props) => {
                     placeholder={placeholderText}
                     inputReadOnly
                     type='date'
+                    value={value ? dayjs(value) : null}
                     className={`!w-full !h-10 !rounded-lg !text-base
                     !border !border-borderColor
                     !px-3 !outline-none !bg-white
