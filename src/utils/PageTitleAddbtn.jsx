@@ -1,13 +1,18 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import ButtonUi from './ButtonUi'
 import * as XLSX from 'xlsx';
 import apiList from '../config/apiList';
 import api from '../config/api';
 import { displayDate } from './DateDisplay';
+import { userState } from '../context/UserContext';
+import { useToast } from '../context/ToastContext';
+import { useMutation } from '@tanstack/react-query';
 
 const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButtons = [], importButton, displayStatus, exportApiName, ...rest }) => {
 
     const { importFile } = apiList()
+    const { setLoading } = userState()
+    const { showToast } = useToast();
 
     const fileInputRef = useRef(null);
 
@@ -16,6 +21,14 @@ const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButton
             fileInputRef.current.click();
         }
     };
+
+    const { mutate: handleImportApi, isPending: importPending } = useMutation({
+        mutationFn: (formattedData) => api.post(importFile(exportApiName), { data: formattedData }),
+        onSuccess: ({ data }) => {
+            importButton.refresh()
+            showToast(data.message, 'success');
+        },
+    });
 
     const handleFileUpload = async (e) => {
         const file = e.target.files[0];
@@ -47,16 +60,18 @@ const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButton
 
                 return formattedRow;
             });
-
-            const res = await api.post(importFile(exportApiName), { data: formattedData })
-            if (res.success) {
-                importClick(res.data.result)
-            }
-
+            handleImportApi(formattedData)
         };
 
         reader.readAsBinaryString(file);
     };
+
+    const isLoading = useMemo(() => importPending, [importPending])
+
+    useEffect(() => {
+        if (isLoading == undefined || isLoading == null) return
+        setLoading(isLoading)
+    }, [isLoading])
 
 
     return (

@@ -12,7 +12,7 @@ import { displayDateTime } from '../../utils/DateDisplay'
 const Leads = () => {
 
   const { leads, exportFile } = apiList()
-  const { user, hasPermission, options } = userState()
+  const { user, hasPermission, options, setLoading } = userState()
   // const { showToast } = useToast()
 
   const navigate = useNavigate();
@@ -185,10 +185,23 @@ const Leads = () => {
     ]
   }, [])
 
+  const importButton = useMemo(() => {
+    return {
+      refresh: allLeadRefetch
+    }
+  }, [allLeadRefetch])
+
+  const isLoading = useMemo(() => isLeadFetching || exportPending, [isLeadFetching, exportPending])
+
+  useEffect(() => {
+    if (isLoading == undefined || isLoading == null) return
+    setLoading(isLoading)
+  }, [isLoading])
+
   return (
     <div className='flex flex-col gap-5'>
       <div className="bg-white p-5 rounded-lg">
-        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} importButton={true} exportApiName='leads' />
+        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} importButton={importButton} exportApiName='lead' />
       </div>
       <div className="bg-white p-5 rounded-lg">
         <TableUi
