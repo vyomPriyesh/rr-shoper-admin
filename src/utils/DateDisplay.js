@@ -35,6 +35,10 @@ export const displayDate = (date) => {
     return dayjs(date).format('DD-MM-YYYY')
 }
 
+export const DDMMMYYYYdisplayDate = (date) => {
+    return dayjs(date).format('DD MMM YYYY')
+}
+
 export const normalDateFormat = (date) => {
     return dayjs(date, 'DD-MM-YYYY', true)
 }

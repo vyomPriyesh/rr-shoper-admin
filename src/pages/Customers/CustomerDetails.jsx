@@ -7,11 +7,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../../config/api';
 import { useParams } from 'react-router-dom';
 import UserAvatar from '../../utils/UserAvatar';
-import { IoCall, IoShieldCheckmarkSharp } from 'react-icons/io5';
+import { IoCall, IoShieldCheckmarkSharp, IoStopwatchOutline } from 'react-icons/io5';
 import { TfiEmail } from 'react-icons/tfi';
 import { PiBuildingOfficeFill } from 'react-icons/pi';
 import { SlCalender } from 'react-icons/sl';
-import { displayDate } from '../../utils/DateDisplay';
+import { DDMMMYYYYdisplayDate, displayDate } from '../../utils/DateDisplay';
 import { BsBoxFill, BsFillPencilFill } from 'react-icons/bs';
 import CommanModal from '../../utils/CommanModal';
 import { useToast } from '../../context/ToastContext';
@@ -20,7 +20,10 @@ import InputField from '../../utils/InputField';
 import { TbReceiptTax } from 'react-icons/tb';
 import { IoBagCheck } from "react-icons/io5";
 import { FiClock } from "react-icons/fi";
-import { MdOutlinePayment } from "react-icons/md";
+import { MdOutlineCalendarMonth, MdOutlinePayment } from "react-icons/md";
+import { FaArrowRightLong } from 'react-icons/fa6';
+import { Tabs } from 'antd';
+import TableUi from '../../utils/TableUi';
 
 
 const CustomerDetails = () => {
@@ -32,10 +35,38 @@ const CustomerDetails = () => {
     const { id } = useParams();
     const [form] = Form.useForm();
     const [isOpenAddModal, setIsOpenAddModal] = useState(false)
+    const [packageTabIndex, setPackageTabIndex] = useState('1');
+    const [pagination, setPagination] = useState({ page: 1, limit: 5 });
+    const [selectedStatus, setSelectedStatus] = useState('COMPLETED')
+    const [paymentSearch, setPaymentSearch] = useState('')
+    const [debouncedPaymentSearch, setDebouncedPaymentSearch] = useState('')
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedPaymentSearch(paymentSearch)
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [paymentSearch])
 
     const { data = {}, isFetching: customerDetailsFetching } = useQuery({
         queryKey: ['customer-detailes', id],
         queryFn: () => api.get(customers.customerDetailes(id)),
+        enabled: !!user && !!id,
+        select: ({ data }) => data.data.result
+    })
+
+    const payload = useMemo(() => {
+        return {
+            ...pagination,
+            status: selectedStatus,
+            search: debouncedPaymentSearch
+        }
+    }, [pagination, selectedStatus, debouncedPaymentSearch])
+
+    const { data: { data: payments = [], pagination: paginationData = {} } = {}, isFetching: paymentsPending } = useQuery({
+        queryKey: ['customer-payments', id, payload],
+        queryFn: () => api.post(customers.allPayments(id), payload),
         enabled: !!user && !!id,
         select: ({ data }) => data.data.result
     })
@@ -60,6 +91,22 @@ const CustomerDetails = () => {
         }
     })
 
+    const { mutate: handleInvoiceDownload, isPending } = useMutation({
+        mutationFn: (data) => api.get(customers.invoice(data?.payment_id, data?.customer_id), { responseType: 'blob' }),
+        onSuccess: (response) => {
+            const url = window.URL.createObjectURL(response.data);
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.download = "tax-invoice.pdf";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+        },
+    });
+
     const onCloseModal = () => {
         setIsOpenAddModal(false)
         form.resetFields()
@@ -82,45 +129,115 @@ const CustomerDetails = () => {
     const isLoading = useMemo(() => customerHandlePending || customerDetailsFetching, [customerHandlePending, customerDetailsFetching])
 
     useEffect(() => {
-        if (isLoading == undefined || isLoading == null) return
-        setLoading(isLoading)
-    }, [isLoading])
+        if (isPending == undefined || isPending == null) return
+        setLoading(isPending)
+    }, [isPending])
 
-    const activePackages = useMemo(() => data?.subscriptions?.filter(list => list.status == 'active'), [data?.subscriptions])
-    const expirePackages = useMemo(() => data?.subscriptions?.filter(list => list.status == 'expired'), [data?.subscriptions])
+    const packageOrder = useMemo(() => {
+        return options?.packageOrders || [];
+    }, [options?.packageOrders]);
 
-    const statictics = useMemo(() => {
-        return [
-            {
-                icon: BsBoxFill,
-                label: 'Total Packages',
-                value: data?.subscriptions?.length,
-                bgClass: 'bg-red-500/20',
-                textClass: 'text-red-500',
-            },
-            {
-                icon: IoBagCheck,
-                label: 'Active Packages',
-                value: activePackages?.length,
-                bgClass: 'bg-green-500/20',
-                textClass: 'text-green-500',
-            },
-            {
-                icon: FiClock,
-                label: 'Expired Packages',
-                value: expirePackages?.length,
-                bgClass: 'bg-yellow-500/20',
-                textClass: 'text-yellow-500',
-            },
-            {
-                icon: MdOutlinePayment,
-                label: 'Total Payments',
-                value: data?.subscriptions?.reduce((total, subscription) => total + (subscription?.payment_id?.amount || 0), 0),
-                bgClass: 'bg-purple-500/20',
-                textClass: 'text-purple-500',
-            },
-        ]
-    }, [activePackages, expirePackages, data?.subscriptions])
+    const getPackageName = useCallback((packageName) => {
+        return packageOrder.find((item) => item.value === packageName)?.label;
+    }, [packageOrder]);
+
+    const mapPackageDetails = useCallback((data, status) => {
+        return data?.filter(list => list.status == status).map((item) => {
+            return {
+                platform: item?.package_id?.platform?.name,
+                platformImg: images.imgUrl + item?.package_id?.platform?.image?.image,
+                packageName: `${getPackageName(item?.package_id?.name)} Package`,
+                Status: <StatusSection status={item?.status} options={options?.packagesStatuses} />,
+                startDate: `Purchased : ${DDMMMYYYYdisplayDate(item?.start_date)}`,
+                endDate: `Expires : ${DDMMMYYYYdisplayDate(item?.end_date)}`,
+                amount: item?.payment_id?.amount ? `₹ ${item?.payment_id?.amount}` : '',
+            }
+        })
+    }, [options?.packagesStatuses, images.imgUrl, getPackageName])
+
+    const activePackages = useMemo(() => mapPackageDetails(data?.subscriptions, 'active'), [data?.subscriptions])
+    const expiredPackages = useMemo(() => mapPackageDetails(data?.subscriptions, 'expired'), [data?.subscriptions])
+
+    const statictics = useMemo(() => [
+        {
+            icon: BsBoxFill,
+            label: 'Total Packages',
+            value: data?.subscriptions?.length,
+            bgClass: 'bg-red-500/20',
+            textClass: 'text-red-500',
+        },
+        {
+            icon: IoBagCheck,
+            label: 'Active Packages',
+            value: activePackages?.length,
+            bgClass: 'bg-green-500/20',
+            textClass: 'text-green-500',
+        },
+        {
+            icon: FiClock,
+            label: 'Expired Packages',
+            value: expiredPackages?.length,
+            bgClass: 'bg-yellow-500/20',
+            textClass: 'text-yellow-500',
+        },
+        {
+            icon: MdOutlinePayment,
+            label: 'Total Payments',
+            value: data?.subscriptions?.reduce((total, subscription) => total + (subscription?.payment_id?.amount || 0), 0),
+            bgClass: 'bg-purple-500/20',
+            textClass: 'text-purple-500',
+        },
+    ], [activePackages, expiredPackages, data?.subscriptions])
+
+    const handlePackageTabChange = (key) => {
+        setPackageTabIndex(key);
+    }
+
+    const handlePaymentTabChange = (key) => {
+        setSelectedStatus(key);
+    }
+
+    const columns = useMemo(() => [
+        {
+            title: 'Invoice No.',
+            dataIndex: 'invoice_number',
+            key: 'invoice_number',
+        },
+        {
+            title: 'Date',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (_, record) => DDMMMYYYYdisplayDate(record?.createdAt)
+        },
+        {
+            title: 'Package',
+            dataIndex: 'package_id',
+            key: 'package_id',
+            render: (_, record) => getPackageName(record?.package_id?.name)
+        },
+        {
+            title: 'Platform',
+            dataIndex: 'platform',
+            key: 'platform',
+            render: (_, record) => {
+                return <div className="flex flex-row gap-3 items-center">
+                    <img src={images.imgUrl + record?.package_id?.platform?.image?.image} alt="" className="w-10 h-10 object-contain rounded-lg" />
+                    <span className='font-medium'>{record?.package_id?.platform?.name}</span>
+                </div>
+            }
+        },
+        {
+            title: 'Amount',
+            dataIndex: 'amount',
+            key: 'amount',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'payment_status',
+            key: 'payment_status',
+            render: (_, record) => <StatusSection status={record?.payment_status} options={options?.paymentStatuses} />
+        },
+    ], [getPackageName, DDMMMYYYYdisplayDate, images.imgUrl])
 
     return (
         <div className='flex flex-col gap-5'>
@@ -129,7 +246,7 @@ const CustomerDetails = () => {
             </div>
             <div className="bg-white p-5 rounded-lg flex md:flex-row flex-col justify-between gap-5">
                 <div className="flex flex-row gap-8 items-center">
-                    <UserAvatar image={data?.image?.image} name={data?.name} isLoading={customerDetailsFetching} className='2xl:h-40 2xl:w-40 md:h-24 md:w-24 w-20 h-20 rounded-full object-cover' />
+                    <UserAvatar image={data?.image?.image} name={data?.name} isLoading={isLoading} className='2xl:h-40 2xl:w-40 md:h-24 md:w-24 w-20 h-20 rounded-full object-cover' />
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row gap-5 items-center">
                             <span className='text-lg font-medium capitalize'>{data?.name}</span>
@@ -162,6 +279,73 @@ const CustomerDetails = () => {
                     </div>
                 ))}
             </div>
+            <div className="bg-white rounded-lg">
+                <Tabs
+                    activeKey={packageTabIndex}
+                    tabBarExtraContent={
+                        <button className='text-primary group flex flex-row items-center gap-3 transition-all duration-300 ease-out me-5'>
+                            <span className='font-medium group-hover:underline'>View All</span>
+                            <span className='group-hover:translate-x-1 transition-transform duration-300 ease-out'><FaArrowRightLong /></span>
+                        </button>}
+                    defaultActiveKey="1"
+                    items={[
+                        {
+                            key: '1',
+                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === '1' ? ' text-primary' : 'text-gray-600'}`}>Active Packages</span>,
+                            children: <PackagesSection data={activePackages} />
+                        },
+                        {
+                            key: '2',
+                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === '2' ? ' text-primary' : 'text-gray-600'}`}>Expired Packages</span>,
+                            children: <PackagesSection data={expiredPackages} />
+                        }
+                    ]}
+                    onChange={handlePackageTabChange}
+                />
+            </div>
+            <div className="bg-white rounded-lg flex flex-col">
+                <Tabs
+                    activeKey={selectedStatus}
+                    tabBarExtraContent={
+                        <div className='me-5'>
+                            <InputField
+                                className='!w-60'
+                                placeholder='Search Here...'
+                                value={paymentSearch}
+                                onChange={(e) => setPaymentSearch(e.target.value)}
+                            />
+                        </div>
+                    }
+                    defaultActiveKey="COMPLETED"
+                    items={[
+                        {
+                            key: '0',
+                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md text-primary`}>Payments</span>,
+                            disabled: true,
+                        },
+                        {
+                            key: 'COMPLETED',
+                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${selectedStatus === 'COMPLETED' ? ' text-primary' : 'text-gray-600'}`}>Completed Payments</span>,
+                        },
+                        {
+                            key: 'FAILED',
+                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${selectedStatus === 'FAILED' ? ' text-primary' : 'text-gray-600'}`}>Failed Payments</span>,
+                        }
+                    ]}
+                    onChange={handlePaymentTabChange}
+                />
+                <TableUi
+                    columns={columns}
+                    data={payments}
+                    pagination={paginationData}
+                    handlePagination={setPagination}
+                    gridLoading={paymentsPending}
+                    action
+                    callBack
+                    downClick={selectedStatus == 'COMPLETED' ? (data) => handleInvoiceDownload({ payment_id: data?._id, customer_id: data?.customer_id }) : null}
+                />
+
+            </div>
             <CommanModal title='Update Custmers' open={isOpenAddModal} onDone={handleCustomerAction} onClose={onCloseModal}>
                 <Form form={form} className='flex flex-col gap-3'>
                     <Form.Item name='name' rules={[{ required: true, message: 'Name is required' }]}>
@@ -193,6 +377,42 @@ const CustomerDetails = () => {
                     </Form.Item>
                 </Form>
             </CommanModal>
+        </div>
+    )
+}
+
+const PackagesSection = ({ data, }) => {
+    return (
+        <div className="grid grid-cols-3 gap-5 ps-5 pb-5">
+            {data?.map((item, index) => (<PackageCard key={index} {...item} />))}
+        </div>
+    )
+}
+
+const PackageCard = ({ platform, platformImg, Status, packageName, startDate, endDate, amount }) => {
+    return (
+        <div className="p-4 bg-secondary/10 rounded-lg flex flex-col gap-3">
+            <div className="flex flex-row justify-between items-center">
+                <div className="flex flex-row gap-3 items-center">
+                    <img src={platformImg} alt="" className="w-10 h-10 object-contain rounded-lg" />
+                    <span className='font-medium'>{platform}</span>
+                </div>
+                <span>{Status}</span>
+            </div>
+            <div className="flex flex-col gap-2">
+                <div className="flex flex-row items-center justify-between">
+                    <span className='font-medium text-base'>{packageName}</span>
+                    <span className='font-medium text-base'>{amount}</span>
+                </div>
+                <div className="flex flex-row gap-3 items-center text-gray-500">
+                    <span className='text-xl'><MdOutlineCalendarMonth /></span>
+                    <span className='text-sm'>{startDate}</span>
+                </div>
+                <div className="flex flex-row gap-3 items-center text-gray-500">
+                    <span className='text-xl'><IoStopwatchOutline /></span>
+                    <span className='text-sm'>{endDate}</span>
+                </div>
+            </div>
         </div>
     )
 }
