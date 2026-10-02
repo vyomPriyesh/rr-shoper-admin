@@ -13,10 +13,10 @@ import { PiBuildingOfficeFill } from 'react-icons/pi';
 import { SlCalender } from 'react-icons/sl';
 import { DDMMMYYYYdisplayDate, displayDate } from '../../utils/DateDisplay';
 import { BsBoxFill, BsFillPencilFill } from 'react-icons/bs';
-import CommanModal from '../../utils/CommanModal';
 import { useToast } from '../../context/ToastContext';
 import { Form } from 'antd';
 import InputField from '../../utils/InputField';
+import CustomerUpdateModal from './CustomerUpdateModal';
 import { TbReceiptTax } from 'react-icons/tb';
 import { IoBagCheck } from "react-icons/io5";
 import { FiClock } from "react-icons/fi";
@@ -24,6 +24,9 @@ import { MdOutlineCalendarMonth, MdOutlinePayment } from "react-icons/md";
 import { FaArrowRightLong } from 'react-icons/fa6';
 import { Tabs } from 'antd';
 import TableUi from '../../utils/TableUi';
+import { FaEye } from 'react-icons/fa';
+import PackageDetailsModal from './PackageDetailsModal';
+import { getPackageName } from '../../utils/getPackageName';
 
 
 const CustomerDetails = () => {
@@ -40,6 +43,7 @@ const CustomerDetails = () => {
     const [selectedStatus, setSelectedStatus] = useState('COMPLETED')
     const [paymentSearch, setPaymentSearch] = useState('')
     const [debouncedPaymentSearch, setDebouncedPaymentSearch] = useState('')
+    const [subscriptionId, setSubscriptionId] = useState(null)
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -133,17 +137,10 @@ const CustomerDetails = () => {
         setLoading(isPending)
     }, [isPending])
 
-    const packageOrder = useMemo(() => {
-        return options?.packageOrders || [];
-    }, [options?.packageOrders]);
-
-    const getPackageName = useCallback((packageName) => {
-        return packageOrder.find((item) => item.value === packageName)?.label;
-    }, [packageOrder]);
-
     const mapPackageDetails = useCallback((data, status) => {
         return data?.filter(list => list.status == status).map((item) => {
             return {
+                id: item._id,
                 platform: item?.package_id?.platform?.name,
                 platformImg: images.imgUrl + item?.package_id?.platform?.image?.image,
                 packageName: `${getPackageName(item?.package_id?.name)} Package`,
@@ -239,6 +236,10 @@ const CustomerDetails = () => {
         },
     ], [getPackageName, DDMMMYYYYdisplayDate, images.imgUrl])
 
+    const handleViewDetails = (id) => {
+        setSubscriptionId(id)
+    }
+
     return (
         <div className='flex flex-col gap-5'>
             <div className="bg-white p-5 rounded-lg">
@@ -292,12 +293,12 @@ const CustomerDetails = () => {
                         {
                             key: '1',
                             label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === '1' ? ' text-primary' : 'text-gray-600'}`}>Active Packages</span>,
-                            children: <PackagesSection data={activePackages} />
+                            children: <PackagesSection data={activePackages} handleViewDetails={handleViewDetails} />
                         },
                         {
                             key: '2',
                             label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === '2' ? ' text-primary' : 'text-gray-600'}`}>Expired Packages</span>,
-                            children: <PackagesSection data={expiredPackages} />
+                            children: <PackagesSection data={expiredPackages} handleViewDetails={handleViewDetails} />
                         }
                     ]}
                     onChange={handlePackageTabChange}
@@ -318,11 +319,6 @@ const CustomerDetails = () => {
                     }
                     defaultActiveKey="COMPLETED"
                     items={[
-                        {
-                            key: '0',
-                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md text-primary`}>Payments</span>,
-                            disabled: true,
-                        },
                         {
                             key: 'COMPLETED',
                             label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${selectedStatus === 'COMPLETED' ? ' text-primary' : 'text-gray-600'}`}>Completed Payments</span>,
@@ -346,50 +342,27 @@ const CustomerDetails = () => {
                 />
 
             </div>
-            <CommanModal title='Update Custmers' open={isOpenAddModal} onDone={handleCustomerAction} onClose={onCloseModal}>
-                <Form form={form} className='flex flex-col gap-3'>
-                    <Form.Item name='name' rules={[{ required: true, message: 'Name is required' }]}>
-                        <InputField type='text' placeholder='Enter Name' />
-                    </Form.Item>
-                    <Form.Item name='email' rules={[
-                        { required: true, message: 'Email is required' },
-                        { type: 'email', message: 'Enter valid email' }
-                    ]}>
-                        <InputField type='email' placeholder='Enter Email' />
-                    </Form.Item>
-                    <Form.Item name='mobile' rules={[
-                        { required: true, message: 'Mobile number is required' },
-                        { len: 10, message: 'Enter valid 10-digit mobile number' },
-                        {
-                            pattern: /^[0-9]+$/,
-                            message: "Mobile number must contain only digits",
-                        },
-                    ]}>
-                        <InputField type='text' maxLength={10} placeholder='Enter Mobile Number' />
-                    </Form.Item>
-                    <Form.Item name='gst_number' rules={[{ required: true, message: 'GST Number is required' }]}>
-                        <InputField type='text' placeholder='Enter GST Number' />
-                    </Form.Item>
-                    <Form.Item name='image'>
-                        <InputField
-                            type='upload'
-                        />
-                    </Form.Item>
-                </Form>
-            </CommanModal>
+            <CustomerUpdateModal
+                isOpenAddModal={isOpenAddModal}
+                handleCustomerAction={handleCustomerAction}
+                onCloseModal={onCloseModal}
+                form={form}
+                title='Update Custmers'
+            />
+            <PackageDetailsModal open={!!subscriptionId} subscriptionId={subscriptionId} onClose={() => setSubscriptionId(null)} />
         </div>
     )
 }
 
-const PackagesSection = ({ data, }) => {
+const PackagesSection = ({ data, handleViewDetails }) => {
     return (
         <div className="grid grid-cols-3 gap-5 ps-5 pb-5">
-            {data?.map((item, index) => (<PackageCard key={index} {...item} />))}
+            {data?.map((item, index) => (<PackageCard key={index} {...item} handleViewDetails={handleViewDetails} />))}
         </div>
     )
 }
 
-const PackageCard = ({ platform, platformImg, Status, packageName, startDate, endDate, amount }) => {
+const PackageCard = ({ platform, platformImg, Status, packageName, startDate, endDate, amount, handleViewDetails, id }) => {
     return (
         <div className="p-4 bg-secondary/10 rounded-lg flex flex-col gap-3">
             <div className="flex flex-row justify-between items-center">
@@ -413,6 +386,10 @@ const PackageCard = ({ platform, platformImg, Status, packageName, startDate, en
                     <span className='text-sm'>{endDate}</span>
                 </div>
             </div>
+            <button onClick={() => handleViewDetails(id)} className='flex flex-row gap-3 items-center justify-center px-4 py-2 border text-primary border-primary rounded-lg hover:bg-primary hover:text-white transition-all duration-300 ease-out'>
+                <span><FaEye /></span>
+                <span className='font-medium'>View Details</span>
+            </button>
         </div>
     )
 }

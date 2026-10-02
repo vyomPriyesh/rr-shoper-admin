@@ -8,9 +8,8 @@ import api from '../../config/api';
 import { Form, Image } from 'antd';
 import TableUi from '../../utils/TableUi';
 import InputField from '../../utils/InputField';
-import CommanModal from '../../utils/CommanModal';
-import Loader from '../../utils/Loader';
 import { useNavigate } from 'react-router-dom';
+import CustomerUpdateModal from './CustomerUpdateModal';
 
 const Customers = () => {
 
@@ -47,8 +46,14 @@ const Customers = () => {
     const { mutate: handleCustomerAction, isPending: customerHandlePending } = useMutation({
         mutationFn: async () => {
             const payload = await form.validateFields();
-            payload.image = payload?.image?.uid
-            const response = await api.post(isOpenPassModal ? customers.updateCustomerPassword(editId, payload.password) : editId ? customers.updateCustomer(editId) : customers.add, payload);
+
+            if (isOpenPassModal) {
+                const response = await api.get(customers.updateCustomerPassword(editId, payload.password));
+                return response.data;
+            }
+
+            payload.image = payload?.image?.uid;
+            const response = await api.post(editId ? customers.updateCustomer(editId) : customers.add, payload);
             return response.data;
         },
         onSuccess: ({ message }) => {
@@ -123,6 +128,7 @@ const Customers = () => {
     const onCloseModal = () => {
         setEditId(null)
         setIsOpenAddModal(false)
+        setIsOpenPassModal(false)
         form.resetFields()
     }
 
@@ -175,64 +181,14 @@ const Customers = () => {
                 passClick={user?.role === 'admin' && handlePassClick}
                 deleteClick={(data) => handleDeleteCustomer(data._id)}
             />
-            <CommanModal title={editId ? 'Update Custmers' : 'Add Custmer'} open={isOpenAddModal || isOpenPassModal} onDone={handleCustomerAction} onClose={onCloseModal}>
-                <Form form={form} className='flex flex-col gap-3'>
-                    {!isOpenPassModal &&
-                        <>
-                            <Form.Item name='name' rules={[{ required: true, message: 'Name is required' }]}>
-                                <InputField type='text' placeholder='Enter Name' />
-                            </Form.Item>
-                            <Form.Item name='email' rules={[
-                                { required: true, message: 'Email is required' },
-                                { type: 'email', message: 'Enter valid email' }
-                            ]}>
-                                <InputField type='email' placeholder='Enter Email' />
-                            </Form.Item>
-                            <Form.Item name='mobile' rules={[
-                                { required: true, message: 'Mobile number is required' },
-                                { len: 10, message: 'Enter valid 10-digit mobile number' },
-                                {
-                                    pattern: /^[0-9]+$/,
-                                    message: "Mobile number must contain only digits",
-                                },
-                            ]}>
-                                <InputField type='text' maxLength={10} placeholder='Enter Mobile Number' />
-                            </Form.Item>
-                            <Form.Item name='gst_number' rules={[{ required: true, message: 'GST Number is required' }]}>
-                                <InputField type='text' placeholder='Enter GST Number' />
-                            </Form.Item>
-                            <Form.Item name='image'>
-                                <InputField
-                                    type='upload'
-                                />
-                            </Form.Item>
-                        </>
-                    }
-                    {isOpenPassModal &&
-                        <Form.Item name='cpassword' dependencies={["password"]}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: "Confirm password is required",
-                                },
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value || getFieldValue("password") === value) {
-                                            return Promise.resolve();
-                                        }
-
-                                        return Promise.reject(
-                                            new Error("Passwords do not match")
-                                        );
-                                    },
-                                }),
-                            ]}
-                        >
-                            <InputField type='password' placeholder='Confirm Password' />
-                        </Form.Item>
-                    }
-                </Form>
-            </CommanModal>
+            <CustomerUpdateModal
+                isOpenAddModal={isOpenAddModal || isOpenPassModal}
+                passwordModal={isOpenPassModal}
+                handleCustomerAction={handleCustomerAction}
+                onCloseModal={onCloseModal}
+                form={form}
+                title={isOpenPassModal ? 'Change Password' : (editId ? 'Update Custmers' : 'Add Custmer')}
+            />
         </div>
     )
 }

@@ -31,6 +31,10 @@ input[type="number"] {
     opacity: 1;
 }   
 
+.ant-modal-container{
+    padding: 0 !important;
+}
+
 .ant-tabs-ink-bar {
     background: #B06A8D !important;
 }

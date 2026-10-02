@@ -19,7 +19,8 @@ const apiList = () => {
             deleteCustomer: (id) => `customers/delete-customer/${id}`,
             customerStatusUpdate: (id) => `customers/update-status/${id}`,
             customerDetailes: (id) => `customers/detailes/${id}`,
-            updateCustomerPassword: (password) => `profile/update-password/${password}`,
+            subscriptionDetails: (id) => `subscription-details/${id}`,
+            updateCustomerPassword: (id, password) => `customers/update-customer/${id}/${password}`,
             allPayments: (id) => `customers/payments/${id}`,
             invoice: (invoice, customerId) => `payment/invoice/${invoice}/${customerId}`
         },
