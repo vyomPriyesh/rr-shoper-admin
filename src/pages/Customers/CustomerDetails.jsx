@@ -148,8 +148,8 @@ const CustomerDetails = () => {
                 platformImg: images.imgUrl + item?.package_id?.platform?.image?.image,
                 packageName: `${getPackageName(item?.package_id?.name)} Package`,
                 Status: <StatusSection status={item?.status} options={options?.packagesStatuses} />,
-                startDate: `Purchased : ${DDMMMYYYYdisplayDate(item?.start_date)}`,
-                endDate: `Expires : ${DDMMMYYYYdisplayDate(item?.end_date)}`,
+                startDate: `Purchased : ${DDMMMYYYYdisplayDate(item?.starts_at)}`,
+                endDate: item?.expires_at ? `Expires : ${DDMMMYYYYdisplayDate(item?.expires_at)}` : 'One Time',
                 amount: item?.payment_id?.amount ? `₹ ${item?.payment_id?.amount}` : '',
             }
         })
