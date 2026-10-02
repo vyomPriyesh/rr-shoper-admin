@@ -1,4 +1,4 @@
-import { Popconfirm, Table } from 'antd'
+import { Empty, Popconfirm, Table } from 'antd'
 import React from 'react'
 import ButtonUi from './ButtonUi'
 import { MdOutlineEdit, MdRemoveRedEye } from 'react-icons/md'
@@ -57,6 +57,7 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
         dataSource={data}
         loading={gridLoading}
         rowKey="_id"
+        locale={{ emptyText: <Empty description="No data" /> }}
         // scroll={{ y: 500 }}
         pagination={pagination?.total > 10 &&
         {
