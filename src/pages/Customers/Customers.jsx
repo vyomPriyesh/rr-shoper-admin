@@ -11,6 +11,7 @@ import InputField from '../../utils/InputField';
 import { useNavigate } from 'react-router-dom';
 import CustomerUpdateModal from './CustomerUpdateModal';
 import { filterState } from '../../context/Filtercontext';
+import UserAvatar from '../../utils/UserAvatar';
 
 const Customers = () => {
 
@@ -92,20 +93,22 @@ const Customers = () => {
 
     const columns = [
         {
+            title: '',
+            dataIndex: 'name',
+            key: 'name',
+            fixed: 'start',
+            width: 90,
+            render: (_, record) => {
+                return (
+                    <UserAvatar image={record?.image?.image && images.imgUrl + record?.image?.image} name={record?.name} />
+                )
+            },
+        },
+        {
             title: 'Customer',
             dataIndex: 'name',
             key: 'name',
             fixed: 'start',
-            render: (_, record) => {
-                return (
-                    <div className="flex flex-row gap-3 place-items-center">
-                        <div className='!w-12 !h-12 aspect-square rounded-full overflow-hidden' >
-                            <Image src={record?.image?.image ? images.imgUrl + record?.image?.image : `https://ui-avatars.com/api/?background=B06A8D&color=fff&name=${record?.name}`} className='aspect-square w-full h-full object-cover' />
-                        </div>
-                        <span className='text-lg'>{record?.name}</span>
-                    </div>
-                )
-            },
         },
         {
             title: 'Email',
