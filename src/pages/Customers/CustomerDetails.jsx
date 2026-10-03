@@ -270,7 +270,7 @@ const CustomerDetails = () => {
             <div className="grid grid-cols-4 gap-5">
                 {statictics?.map((list, i) => (
                     <div key={i} className="bg-white p-5 flex flex-row gap-4 rounded-lg">
-                        <span className={`text-3xl ${list.bgClass} ${list.textClass} h-14 w-14 flex justify-center items-center rounded-full`}>
+                        <span className={`text-3xl ${list.bgClass} ${list.textClass} h-14 w-14 aspect-square flex justify-center items-center rounded-full`}>
                             <list.icon />
                         </span>
                         <div className="flex flex-col">

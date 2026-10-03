@@ -1,24 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import CommanModal from '../../utils/CommanModal'
 import apiList from '../../config/apiList';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { userState } from '../../context/UserContext';
 import api from '../../config/api';
 import { getPackageName } from '../../utils/getPackageName';
 import StatusSection from '../../utils/StatusSection';
 import { Tabs } from 'antd';
-import { FaCheck } from 'react-icons/fa';
-import { BsCurrencyRupee } from 'react-icons/bs';
+import { FaCheck, FaSave } from 'react-icons/fa';
+import { BsCurrencyRupee, BsFillPencilFill } from 'react-icons/bs';
 import { MdOutlineCalendarMonth } from 'react-icons/md';
 import { IoStopwatchOutline } from 'react-icons/io5';
 import { DDMMMYYYYdisplayDate } from '../../utils/DateDisplay';
+import { RxCross2 } from 'react-icons/rx';
+import InputField from '../../utils/InputField';
+import { useToast } from '../../context/ToastContext';
 
 const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
 
     const { customers, images } = apiList();
     const { user, options } = userState();
+    const { showToast } = useToast();
 
-    const [tabIndex, setTabIndex] = React.useState('1');
+    const [tabIndex, setTabIndex] = useState('1');
+    const [isEditUpdate, setIsEditUpdate] = useState(false);
+    const [updates, setUpdates] = useState([]);
 
     const { data = {}, isFetching: subscriptionDetailsFetching } = useQuery({
         queryKey: ['subscription-details', subscriptionId],
@@ -30,7 +36,7 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
                 platform: response?.package_id?.platform?.name,
                 platformImg: images.imgUrl + response?.package_id?.platform?.image?.image,
                 packageName: response?.package_id?.name,
-                services: response?.package_id?.services,
+                services: response?.serviceUpdates,
                 status: response?.status,
                 amount: '₹ ' + response?.payment_id?.amount,
                 purchaseDate: DDMMMYYYYdisplayDate(response?.starts_at),
@@ -38,6 +44,20 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
             }
         }
     })
+
+    useEffect(() => {
+        if (data?.services) {
+            setUpdates(data?.services)
+        }
+    }, [data?.services])
+
+    const { mutate: handleSaveSericesUpdates, isPending } = useMutation({
+        mutationFn: () => api.post(customers.serviceUpdates(subscriptionId), updates),
+        onSuccess: ({ data }) => {
+            showToast(data.message, 'success');
+            setIsEditUpdate(false)
+        },
+    });
 
     const Title = () => {
         return (
@@ -54,6 +74,14 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
 
     const handleTabChange = (key) => {
         setTabIndex(key)
+    }
+
+    const handleUpdate = (i, value) => {
+        setUpdates((prevUpdates) =>
+            prevUpdates.map((service, index) =>
+                index === i ? { ...service, update: value } : service
+            )
+        )
     }
 
     return (
@@ -79,14 +107,36 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
                         label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${tabIndex === '1' ? ' text-primary' : 'text-gray-600'}`}>Package Details</span>,
                         children: <div className='flex flex-col gap-4'>
                             <div className="border-b border-gray-200 pb-4">
-                                <span className='font-medium text-base'>Key Features</span>
+                                <div className="flex flex-row items-center justify-between">
+                                    <span className='font-medium text-base'>Key Features</span>
+                                    <div className="flex flex-row items-center gap-5">
+                                        <button
+                                            onClick={() => setIsEditUpdate(prev => !prev)}
+                                            className={`flex flex-row gap-3 items-center px-4 py-1 border rounded-lg ${isEditUpdate ? 'text-red-500 border-red-500 hover:bg-red-500' : 'text-primary border-primary hover:bg-primary'} hover:text-white transition-all duration-300 ease-out`}>
+                                            <span>{isEditUpdate ? <RxCross2 size={20} /> : <BsFillPencilFill />}</span>
+                                            <span className='font-medium'>{isEditUpdate ? 'Cancel' : 'Edit'} Updates</span>
+                                        </button>
+                                        {isEditUpdate &&
+                                            <button
+                                                onClick={handleSaveSericesUpdates}
+                                                className={`flex flex-row gap-3 items-center px-4 py-1 border rounded-lg text-primary border-primary hover:bg-primary hover:text-white transition-all duration-300 ease-out`}>
+                                                <span><FaSave size={20} /></span>
+                                                <span className='font-medium'>Save Updates</span>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
                                 <div className="flex flex-col gap-2 mt-4">
-                                    {data?.services?.map((service, index) => (
-                                        <div key={index} className="flex items-start gap-2 text-sm leading-5 text-gray-600"  >
+                                    {updates?.map((service, index) => (
+                                        <div key={index} className="flex items-center gap-2 text-sm leading-5 text-gray-600"  >
                                             <div className="flex h-5 w-5 shrink-0 aspect-square items-center justify-center rounded-full bg-[#F8EEF3] text-xs text-primary 2xl:h-6 2xl:w-6">
                                                 <FaCheck />
                                             </div>
-                                            <span className="min-w-0 break-words">{service}</span>
+                                            <div className="flex flex-row items-center justify-between gap-5">
+                                                <span className="min-w-0 break-words text-nowrap">{service?.name}</span>
+                                                {(service?.update && !isEditUpdate) && <span className="min-w-0 break-words bg-secondary/20 text-primary px-3 py-1 rounded-full font-medium">{service?.update}</span>}
+                                                {isEditUpdate && <div><InputField onChange={(e) => handleUpdate(index, e.target.value)} className='!w-60' placeholder='Enter Feature Update' value={service?.update} /></div>}
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
