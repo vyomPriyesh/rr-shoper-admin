@@ -8,12 +8,13 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import ButtonUi from '../../utils/ButtonUi'
 import TableUi from '../../utils/TableUi'
 import { displayDateTime } from '../../utils/DateDisplay'
+import { filterState } from '../../context/Filtercontext'
 
 const Leads = () => {
 
   const { leads, exportFile } = apiList()
   const { user, hasPermission, options, setLoading } = userState()
-  // const { showToast } = useToast()
+  const { filtersData } = filterState();
 
   const navigate = useNavigate();
 
@@ -23,9 +24,10 @@ const Leads = () => {
   const payload = useMemo(() => {
     return {
       ...pagination,
+      ...filtersData,
       status: selectedStatus
     }
-  }, [pagination, selectedStatus])
+  }, [pagination, selectedStatus, filtersData])
 
   const { data: { allLead = [], paginationData = {}, statusCounts = [] } = {}, refetch: allLeadRefetch, isFetching: isLeadFetching } = useQuery({
     queryKey: ['all-lead-forms', payload],
@@ -200,9 +202,7 @@ const Leads = () => {
 
   return (
     <div className='flex flex-col gap-5'>
-      <div className="bg-white p-5 rounded-lg">
-        <PageTitleAddbtn title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} importButton={importButton} exportApiName='lead' />
-      </div>
+      <PageTitleAddbtn filter={true} title={<Title />} add={canAdd} addClick={() => navigate('/leads/add')} otherButtons={otherButton} importButton={importButton} exportApiName='lead' />
       <div className="bg-white p-5 rounded-lg">
         <TableUi
           columns={columns}
