@@ -24,7 +24,7 @@ import AddUpdateLeadForm from '../pages/LeadsPages/AddUpdateLeadForm';
 import Leads from '../pages/LeadsPages/Leads';
 import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
 import LeadDetails from '../pages/LeadsPages/LeadDetails';
-import Customers from '../pages/Customers/Customers'; 
+import Customers from '../pages/Customers/Customers';
 import CustomerDetails from '../pages/Customers/CustomerDetails';
 import { IoTicketSharp } from 'react-icons/io5';
 import Tickets from '../pages/TicketsPages/Tickets';
@@ -86,7 +86,7 @@ const Admin = ({ role }) => {
         },
         {
             name: "Leads",
-            icon: MdOutlineLeaderboard ,
+            icon: MdOutlineLeaderboard,
             children: [
                 {
                     name: "Leads",
@@ -162,7 +162,7 @@ const Admin = ({ role }) => {
                         <Route element={<CanAccessRoute module_name="Lead Titles" />}>
                             <Route path="leads/lead-titles/view" element={<LeadTitles />} />
                         </Route>
-                         <Route element={<CanAccessRoute module_name="Lead Forms" />}>
+                        <Route element={<CanAccessRoute module_name="Lead Forms" />}>
                             <Route path="leads/lead-forms/view" element={<LeadForms />} />
                             <Route path="leads/lead-forms/add" element={<AddUpdateLeadForm />} />
                             <Route path="leads/lead-forms/update/:id" element={<AddUpdateLeadForm />} />
