@@ -40,9 +40,7 @@ const LeadDetails = () => {
         <>
             {leadDetailsFetching && <Loader />}
             <div className='flex flex-col gap-5'>
-                <div className="bg-white p-5 rounded-lg">
-                    <PageTitleAddbtn title={'Lead Details'} displayStatus={<StatusSection status={status} options={options?.ticketStatuses} />} />
-                </div>
+                <PageTitleAddbtn title={'Lead Details'} displayStatus={<StatusSection status={status} options={options?.ticketStatuses} />} />
                 <div className="rounded-lg flex flex-col gap-5">
                     <div className="flex flex-row gap-5">
                         <SummaryCard

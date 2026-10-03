@@ -87,6 +87,21 @@ const Leads = () => {
 
   const columns = useMemo(() => [
     {
+      title: 'lead No.',
+      fixed: 'start',
+      dataIndex: 'lead_id',
+      key: 'lead_id',
+      width: 250,
+    },
+    {
+      title: 'lead No.',
+      fixed: 'start',
+      dataIndex: 'customer',
+      key: 'customer',
+      width: 250,
+      render: (_, record) => record?.customer?.name
+    },
+    {
       title: inputColumns?.[0]?.title,
       dataIndex: inputColumns?.[0]?.title,
       key: inputColumns?.[0]?.title,
@@ -212,6 +227,7 @@ const Leads = () => {
           gridLoading={isLeadFetching}
           action
           callBack
+          scroll={{ x: 2000 }}
           module_name='Leads'
           viewClick={(data) => navigate(`/leads/view/${data?._id}`)}
           editClick={(data) => navigate(`/leads/update/${data?._id}`)}

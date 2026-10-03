@@ -6,7 +6,7 @@ import { RiDeleteBin6Line, RiDownloadLine, RiLockPasswordFill } from 'react-icon
 import { useLocation, useNavigate } from 'react-router-dom'
 import { userState } from '../context/UserContext'
 
-const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, callBack, gridLoading, module_name, passClick, downClick, ...rest }) => {
+const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, showSizeChanger, pagination = {}, handlePagination, callBack, gridLoading, module_name, passClick, downClick, scroll, ...rest }) => {
 
     const { hasPermission } = userState();
 
@@ -58,7 +58,7 @@ const TableUi = ({ columns, data, action, editClick, viewClick, deleteClick, sho
         loading={gridLoading}
         rowKey="_id"
         locale={{ emptyText: <Empty description="No data" /> }}
-        scroll={{ y: 500 }}
+        scroll={{ y: 500, x: 1300, ...scroll }}
         pagination={pagination?.total > 10 &&
         {
             current: pagination.page,
