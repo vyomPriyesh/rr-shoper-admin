@@ -141,6 +141,7 @@ const CustomerDetails = () => {
         return data?.filter(list => list.status == status).map((item) => {
             return {
                 id: item._id,
+                cancelledReason: item.cancelledReason,
                 platform: item?.package_id?.platform?.name,
                 platformImg: images.imgUrl + item?.package_id?.platform?.image?.image,
                 packageName: `${getPackageName(item?.package_id?.name)} Package`,
@@ -154,6 +155,7 @@ const CustomerDetails = () => {
 
     const activePackages = useMemo(() => mapPackageDetails(data?.subscriptions, 'active'), [data?.subscriptions])
     const expiredPackages = useMemo(() => mapPackageDetails(data?.subscriptions, 'expired'), [data?.subscriptions])
+    const cancelledPackages = useMemo(() => mapPackageDetails(data?.subscriptions, 'cancelled'), [data?.subscriptions])
 
     const statictics = useMemo(() => [
         {
@@ -299,6 +301,11 @@ const CustomerDetails = () => {
                             key: '2',
                             label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === '2' ? ' text-primary' : 'text-gray-600'}`}>Expired Packages</span>,
                             children: <PackagesSection data={expiredPackages} handleViewDetails={handleViewDetails} />
+                        },
+                        {
+                            key: '3',
+                            label: <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === '3' ? ' text-primary' : 'text-gray-600'}`}>Cancelled Packages</span>,
+                            children: <PackagesSection data={cancelledPackages} handleViewDetails={handleViewDetails} />
                         }
                     ]}
                     onChange={handlePackageTabChange}

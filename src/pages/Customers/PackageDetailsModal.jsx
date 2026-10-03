@@ -15,6 +15,7 @@ import { DDMMMYYYYdisplayDate } from '../../utils/DateDisplay';
 import { RxCross2 } from 'react-icons/rx';
 import InputField from '../../utils/InputField';
 import { useToast } from '../../context/ToastContext';
+import { LuBadgeInfo } from 'react-icons/lu';
 
 const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
 
@@ -33,6 +34,7 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
         select: ({ data }) => {
             const response = data.data.result
             return {
+                cancelledReason: response.cancelledReason,
                 platform: response?.package_id?.platform?.name,
                 platformImg: images.imgUrl + response?.package_id?.platform?.image?.image,
                 packageName: response?.package_id?.name,
@@ -109,22 +111,24 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
                             <div className="border-b border-gray-200 pb-4">
                                 <div className="flex flex-row items-center justify-between">
                                     <span className='font-medium text-base'>Key Features</span>
-                                    <div className="flex flex-row items-center gap-5">
-                                        <button
-                                            onClick={() => setIsEditUpdate(prev => !prev)}
-                                            className={`flex flex-row gap-3 items-center px-4 py-1 border rounded-lg ${isEditUpdate ? 'text-red-500 border-red-500 hover:bg-red-500' : 'text-primary border-primary hover:bg-primary'} hover:text-white transition-all duration-300 ease-out`}>
-                                            <span>{isEditUpdate ? <RxCross2 size={20} /> : <BsFillPencilFill />}</span>
-                                            <span className='font-medium'>{isEditUpdate ? 'Cancel' : 'Edit'} Updates</span>
-                                        </button>
-                                        {isEditUpdate &&
+                                    {data?.status !== 'cancelled' &&
+                                        <div className="flex flex-row items-center gap-5">
                                             <button
-                                                onClick={handleSaveSericesUpdates}
-                                                className={`flex flex-row gap-3 items-center px-4 py-1 border rounded-lg text-primary border-primary hover:bg-primary hover:text-white transition-all duration-300 ease-out`}>
-                                                <span><FaSave size={20} /></span>
-                                                <span className='font-medium'>Save Updates</span>
+                                                onClick={() => setIsEditUpdate(prev => !prev)}
+                                                className={`flex flex-row gap-3 items-center px-4 py-1 border rounded-lg ${isEditUpdate ? 'text-red-500 border-red-500 hover:bg-red-500' : 'text-primary border-primary hover:bg-primary'} hover:text-white transition-all duration-300 ease-out`}>
+                                                <span>{isEditUpdate ? <RxCross2 size={20} /> : <BsFillPencilFill />}</span>
+                                                <span className='font-medium'>{isEditUpdate ? 'Cancel' : 'Edit'} Updates</span>
                                             </button>
-                                        }
-                                    </div>
+                                            {isEditUpdate &&
+                                                <button
+                                                    onClick={handleSaveSericesUpdates}
+                                                    className={`flex flex-row gap-3 items-center px-4 py-1 border rounded-lg text-primary border-primary hover:bg-primary hover:text-white transition-all duration-300 ease-out`}>
+                                                    <span><FaSave size={20} /></span>
+                                                    <span className='font-medium'>Save Updates</span>
+                                                </button>
+                                            }
+                                        </div>
+                                    }
                                 </div>
                                 <div className="flex flex-col gap-2 mt-4">
                                     {updates?.map((service, index) => (
@@ -164,6 +168,14 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
                                     </div>
                                 </div>
                             </div>
+                            {data?.cancelledReason &&
+                                <div className="border-t pt-5">
+                                    <div className="flex flex-row items-center rounded-xl bg-secondary/10 px-2.5 py-2 gap-3">
+                                        <span className='bg-secondary/30 text-primary flex justify-center items-center h-10 w-10 aspect-square text-2xl rounded-full'><LuBadgeInfo /></span>
+                                        <span className='font-medium text-sm'>{data?.cancelledReason}</span>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     },
                     // {
