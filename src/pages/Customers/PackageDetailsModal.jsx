@@ -6,7 +6,7 @@ import { userState } from '../../context/UserContext';
 import api from '../../config/api';
 import { getPackageName } from '../../utils/getPackageName';
 import StatusSection from '../../utils/StatusSection';
-import { Tabs } from 'antd';
+import { Empty, Skeleton, Tabs } from 'antd';
 import { FaCheck, FaSave } from 'react-icons/fa';
 import { BsCurrencyRupee, BsFillPencilFill } from 'react-icons/bs';
 import { MdOutlineCalendarMonth } from 'react-icons/md';
@@ -86,6 +86,25 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
         )
     }
 
+    if (subscriptionDetailsFetching) {
+        return (
+            <CommanModal
+                width={800}
+                open={open}
+                onClose={onClose}
+                footer={false}
+                title={<PackageDetailsSkeletonTitle />}
+                styles={{
+                    body: {
+                        padding: '0px 15px',
+                    },
+                }}
+            >
+                <PackageDetailsSkeleton />
+            </CommanModal>
+        )
+    }
+
     return (
         <CommanModal
             width={800}
@@ -130,20 +149,26 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
                                         </div>
                                     }
                                 </div>
-                                <div className="flex flex-col gap-2 mt-4">
-                                    {updates?.map((service, index) => (
-                                        <div key={index} className="flex items-center gap-2 text-sm leading-5 text-gray-600"  >
-                                            <div className="flex h-5 w-5 shrink-0 aspect-square items-center justify-center rounded-full bg-[#F8EEF3] text-xs text-primary 2xl:h-6 2xl:w-6">
-                                                <FaCheck />
+                                {!updates?.length ? (
+                                    <div className="flex items-center justify-center py-8">
+                                        <Empty description="No data" />
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col gap-2 mt-4">
+                                        {updates?.map((service, index) => (
+                                            <div key={index} className="flex items-center gap-2 text-sm leading-5 text-gray-600"  >
+                                                <div className="flex h-5 w-5 shrink-0 aspect-square items-center justify-center rounded-full bg-[#F8EEF3] text-xs text-primary 2xl:h-6 2xl:w-6">
+                                                    <FaCheck />
+                                                </div>
+                                                <div className="flex flex-row items-center justify-between gap-5">
+                                                    <span className="min-w-0 break-words text-nowrap">{service?.name}</span>
+                                                    {(service?.update && !isEditUpdate) && <span className="min-w-0 break-words bg-secondary/20 text-primary px-3 py-1 rounded-full font-medium">{service?.update}</span>}
+                                                    {isEditUpdate && <div><InputField onChange={(e) => handleUpdate(index, e.target.value)} className='!w-60' placeholder='Enter Feature Update' value={service?.update} /></div>}
+                                                </div>
                                             </div>
-                                            <div className="flex flex-row items-center justify-between gap-5">
-                                                <span className="min-w-0 break-words text-nowrap">{service?.name}</span>
-                                                {(service?.update && !isEditUpdate) && <span className="min-w-0 break-words bg-secondary/20 text-primary px-3 py-1 rounded-full font-medium">{service?.update}</span>}
-                                                {isEditUpdate && <div><InputField onChange={(e) => handleUpdate(index, e.target.value)} className='!w-60' placeholder='Enter Feature Update' value={service?.update} /></div>}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-3">
                                 <div className="flex flex-row gap-3 items-start">
@@ -188,5 +213,43 @@ const PackageDetailsModal = ({ subscriptionId, open, onClose }) => {
         </CommanModal>
     )
 }
+
+const PackageDetailsSkeletonTitle = () => (
+    <div className="flex flex-row gap-4 items-center">
+        <Skeleton.Avatar active size={48} shape="circle" />
+        <div className="flex flex-col gap-2">
+            <Skeleton.Input active size="small" style={{ width: 120, height: 20 }} />
+            <Skeleton.Input active size="small" style={{ width: 90, height: 16 }} />
+        </div>
+    </div>
+)
+
+const PackageDetailsSkeleton = () => (
+    <div className='flex flex-col gap-5 py-2'>
+        <div className="border-b border-gray-200 pb-4">
+            <div className="flex items-center justify-between mb-4">
+                <Skeleton.Input active size="small" style={{ width: 140, height: 22 }} />
+                <Skeleton.Button active style={{ width: 150, height: 36 }} />
+            </div>
+            {[1, 2, 3].map((item) => (
+                <div key={item} className="flex items-center gap-3 py-2">
+                    <Skeleton.Avatar active size={20} shape="circle" />
+                    <Skeleton.Input active size="small" style={{ width: item === 2 ? 220 : 150, height: 18 }} />
+                </div>
+            ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[1, 2, 3].map((item) => (
+                <div key={item} className="flex flex-row gap-3 items-start">
+                    <Skeleton.Avatar active size={44} shape="circle" />
+                    <div className="flex flex-col gap-2">
+                        <Skeleton.Input active size="small" style={{ width: 80, height: 16 }} />
+                        <Skeleton.Input active size="small" style={{ width: 100, height: 18 }} />
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+)
 
 export default PackageDetailsModal

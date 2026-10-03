@@ -14,7 +14,7 @@ import { SlCalender } from 'react-icons/sl';
 import { DDMMMYYYYdisplayDate, displayDate } from '../../utils/DateDisplay';
 import { BsBoxFill, BsFillPencilFill } from 'react-icons/bs';
 import { useToast } from '../../context/ToastContext';
-import { Form } from 'antd';
+import { Empty, Form, Skeleton } from 'antd';
 import InputField from '../../utils/InputField';
 import CustomerUpdateModal from './CustomerUpdateModal';
 import { TbReceiptTax } from 'react-icons/tb';
@@ -242,6 +242,10 @@ const CustomerDetails = () => {
         setSubscriptionId(id)
     }
 
+    if (customerDetailsFetching) {
+        return <CustomerDetailsSkeleton />
+    }
+
     return (
         <div className='flex flex-col gap-5'>
             <div className="bg-white p-5 rounded-lg">
@@ -362,9 +366,78 @@ const CustomerDetails = () => {
 }
 
 const PackagesSection = ({ data, handleViewDetails }) => {
+    if (!data?.length) {
+        return (
+            <div className="flex items-center justify-center py-10">
+                <Empty description="No data" />
+            </div>
+        )
+    }
+
     return (
         <div className="grid grid-cols-3 gap-5 ps-5 pb-5">
             {data?.map((item, index) => (<PackageCard key={index} {...item} handleViewDetails={handleViewDetails} />))}
+        </div>
+    )
+}
+
+const CustomerDetailsSkeleton = () => {
+    return (
+        <div className='flex flex-col gap-5'>
+            <div className="bg-white p-5 rounded-lg">
+                <Skeleton.Input active size="large" block style={{ width: 220, height: 28 }} />
+            </div>
+
+            <div className="bg-white p-5 rounded-lg flex md:flex-row flex-col justify-between gap-5">
+                <div className="flex flex-row gap-8 items-center">
+                    <Skeleton.Avatar active size={96} shape="circle" />
+                    <div className="flex flex-col gap-3">
+                        <Skeleton.Input active size="small" style={{ width: 180, height: 22 }} />
+                        <Skeleton.Input active size="small" style={{ width: 260, height: 18 }} />
+                        <Skeleton.Input active size="small" style={{ width: 220, height: 18 }} />
+                        <Skeleton.Input active size="small" style={{ width: 240, height: 18 }} />
+                        <Skeleton.Input active size="small" style={{ width: 200, height: 18 }} />
+                    </div>
+                </div>
+                <Skeleton.Button active style={{ width: 150, height: 42 }} />
+            </div>
+
+            <div className="grid grid-cols-4 gap-5">
+                {[1, 2, 3, 4].map((item) => (
+                    <div key={item} className="bg-white p-5 rounded-lg flex flex-row gap-4">
+                        <Skeleton.Avatar active size={52} shape="circle" />
+                        <div className="flex flex-col gap-2">
+                            <Skeleton.Input active size="small" style={{ width: 110, height: 18 }} />
+                            <Skeleton.Input active size="small" style={{ width: 70, height: 20 }} />
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <div className="bg-white rounded-lg p-5">
+                <div className="flex gap-4 pb-5">
+                    <Skeleton.Button active style={{ width: 150, height: 32 }} />
+                    <Skeleton.Button active style={{ width: 150, height: 32 }} />
+                    <Skeleton.Button active style={{ width: 150, height: 32 }} />
+                </div>
+                <div className="grid grid-cols-3 gap-5">
+                    {[1, 2, 3].map((card) => (
+                        <div key={card} className="p-4 bg-secondary/10 rounded-lg flex flex-col gap-3">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <Skeleton.Avatar active size={36} shape="square" />
+                                    <Skeleton.Input active size="small" style={{ width: 90, height: 18 }} />
+                                </div>
+                                <Skeleton.Button active style={{ width: 90, height: 28 }} />
+                            </div>
+                            <Skeleton.Input active size="small" style={{ width: '100%', height: 24 }} />
+                            <Skeleton.Input active size="small" style={{ width: '100%', height: 18 }} />
+                            <Skeleton.Input active size="small" style={{ width: '100%', height: 18 }} />
+                            <Skeleton.Button active style={{ width: '100%', height: 38 }} />
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }
