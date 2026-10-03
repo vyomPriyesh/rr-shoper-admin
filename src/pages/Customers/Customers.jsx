@@ -99,7 +99,7 @@ const Customers = () => {
             render: (_, record) => {
                 return (
                     <div className="flex flex-row gap-3 place-items-center">
-                        <div className='!w-12 rounded-full aspect-square overflow-hidden' >
+                        <div className='!w-12 !h-12 aspect-square rounded-full overflow-hidden' >
                             <Image src={record?.image?.image ? images.imgUrl + record?.image?.image : `https://ui-avatars.com/api/?background=B06A8D&color=fff&name=${record?.name}`} className='aspect-square w-full h-full object-cover' />
                         </div>
                         <span className='text-lg'>{record?.name}</span>
