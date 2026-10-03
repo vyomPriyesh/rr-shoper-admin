@@ -236,7 +236,7 @@ const CustomerDetails = () => {
             key: 'payment_status',
             render: (_, record) => <StatusSection status={record?.payment_status} options={options?.paymentStatuses} />
         },
-    ], [getPackageName, DDMMMYYYYdisplayDate, images.imgUrl])
+    ], [getPackageName, DDMMMYYYYdisplayDate, images.imgUrl, options?.paymentStatuses])
 
     const handleViewDetails = (id) => {
         setSubscriptionId(id)
