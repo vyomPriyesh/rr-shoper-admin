@@ -146,6 +146,7 @@ const Customers = () => {
             email: data.email,
             mobile: data.mobile,
             gst_number: data.gst_number,
+            remark: data.remark,
             image: {
                 url: images.imgUrl + data?.image?.image
             },

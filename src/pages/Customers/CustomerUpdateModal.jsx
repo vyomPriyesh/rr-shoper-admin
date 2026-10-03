@@ -64,6 +64,9 @@ const CustomerUpdateModal = ({ isOpenAddModal, handleCustomerAction, onCloseModa
                         <Form.Item name='gst_number' rules={[{ required: true, message: 'GST Number is required' }]}>
                             <InputField type='text' placeholder='Enter GST Number' />
                         </Form.Item>
+                        <Form.Item name='remark'>
+                            <InputField type='textarea' placeholder='Enter Remark' />
+                        </Form.Item>
                         <Form.Item name='image'>
                             <InputField
                                 type='upload'
