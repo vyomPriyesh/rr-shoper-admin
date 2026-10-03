@@ -51,7 +51,8 @@ const AddUpdateDesignation = ({ allLinksData }) => {
 
     // Memoize computed rowData structure
     const computedRowData = useMemo(() => {
-        const allLinks = flattenLinks(allLinksData || []);
+        const removeddesignationroute = allLinksData.filter(list => list.name !== 'Designation')
+        const allLinks = flattenLinks(removeddesignationroute || []);
         const permissionMap = new Map(
             (designationData?.permissions || []).map((permission) => [
                 permission.module_name,
