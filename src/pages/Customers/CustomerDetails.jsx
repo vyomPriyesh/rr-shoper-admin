@@ -249,9 +249,7 @@ const CustomerDetails = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <div className="bg-white p-5 rounded-lg">
-                <PageTitleAddbtn title={'Customer Details'} displayStatus={<StatusSection status={data?.status} options={options?.userAccountStatuses} />} />
-            </div>
+            <PageTitleAddbtn title={'Customer Details'} displayStatus={<StatusSection status={data?.status} options={options?.userAccountStatuses} />} />
             <div className="bg-white p-5 rounded-lg flex md:flex-row flex-col justify-between gap-5">
                 <div className="flex flex-row gap-8 items-center">
                     <UserAvatar image={data?.image?.image} name={data?.name} isLoading={isLoading} className='2xl:h-40 2xl:w-40 md:h-24 md:w-24 w-20 h-20 rounded-full object-cover' />

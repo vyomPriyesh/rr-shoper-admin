@@ -10,12 +10,14 @@ import TableUi from '../../utils/TableUi';
 import InputField from '../../utils/InputField';
 import { useNavigate } from 'react-router-dom';
 import CustomerUpdateModal from './CustomerUpdateModal';
+import { filterState } from '../../context/Filtercontext';
 
 const Customers = () => {
 
     const { customers, images } = apiList();
     const { showToast } = useToast();
     const { user, hasPermission, setLoading } = userState();
+    const { filtersData } = filterState();
 
     const navigate = useNavigate();
 
@@ -25,9 +27,17 @@ const Customers = () => {
     const [isOpenPassModal, setIsOpenPassModal] = useState(false)
     const [form] = Form.useForm();
 
+    const payload = useMemo(() => {
+        return {
+            ...pagination,
+            ...filtersData
+        }
+
+    }, [filtersData, pagination])
+
     const { data: { data: allCustomers = [] } = {}, refetch: allCustomersRefetch, isFetching: allCustomersFetching } = useQuery({
-        queryKey: ['all-customers', pagination],
-        queryFn: () => api.post(customers.all, pagination),
+        queryKey: ['all-customers', payload],
+        queryFn: () => api.post(customers.all, payload),
         enabled: !!user,
         select: ({ data }) => data
     })
@@ -167,7 +177,7 @@ const Customers = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Custmers' add={canAdd} addClick={handleAdd} />
+            <PageTitleAddbtn title='Custmers' add={canAdd} addClick={handleAdd} filter={true} />
             <TableUi
                 columns={columns}
                 data={allCustomers?.data}

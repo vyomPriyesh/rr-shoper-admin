@@ -7,8 +7,21 @@ import { displayDate } from './DateDisplay';
 import { userState } from '../context/UserContext';
 import { useToast } from '../context/ToastContext';
 import { useMutation } from '@tanstack/react-query';
+import Filters from './Filters';
 
-const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButtons = [], importButton, displayStatus, exportApiName, ...rest }) => {
+const PageTitleAddbtn = ({
+    title,
+    add,
+    addClick,
+    addText,
+    className,
+    otherButtons = [],
+    importButton,
+    displayStatus,
+    exportApiName,
+    filter,
+    ...rest
+}) => {
 
     const { importFile } = apiList()
     const { setLoading } = userState()
@@ -75,8 +88,11 @@ const PageTitleAddbtn = ({ title, add, addClick, addText, className, otherButton
 
 
     return (
-        <div className="flex justify-between gap-5">
-            <h2 className='text-xl font-semibold'>{title}</h2>
+        <div className="flex justify-between gap-5 bg-white rounded-lg p-5">
+            <div className="flex flex-row gap-5 items-center">
+                <h2 className='text-xl font-semibold'>{title}</h2>
+                {filter && <Filters />}
+            </div>
             <div className="flex justify-between gap-5">
                 {otherButtons?.length > 0 &&
                     otherButtons?.map((list, i) => (
