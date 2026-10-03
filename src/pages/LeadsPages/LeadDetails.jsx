@@ -10,6 +10,7 @@ import { displayDateTime } from '../../utils/DateDisplay'
 import ImagesUploadUi from '../../utils/ImagesUploadUi'
 import Loader from '../../utils/Loader'
 import StatusSection from '../../utils/StatusSection'
+import UserAvatar from '../../utils/UserAvatar'
 
 const LeadDetails = () => {
 
@@ -177,18 +178,7 @@ const PersonCard = ({
                     ========================== */
                     <>
                         <div className="flex items-center gap-3">
-                            <img
-                                className="h-10 w-10 rounded-full object-cover"
-                                src={
-                                    image ||
-                                    person?.image ||
-                                    person?.profile_image ||
-                                    `https://ui-avatars.com/api/?background=B06A8D&color=fff&name=${encodeURIComponent(
-                                        name
-                                    )}`
-                                }
-                                alt={name}
-                            />
+                            <UserAvatar image={person?.image?.image} name={person?.name} />
 
                             <div className="min-w-0">
                                 <p className="truncate text-sm font-semibold text-gray-900">

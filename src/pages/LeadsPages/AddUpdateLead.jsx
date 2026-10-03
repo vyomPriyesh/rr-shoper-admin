@@ -177,7 +177,7 @@ const AddUpdateLead = () => {
     return (
         <div className='space-y-5'>
             {isSaving && <Loader />}
-            <div className="bg-white rounded-lg p-3 sticky top-0 z-50">
+            <div className="sticky top-0 z-50">
                 <PageTitleAddbtn
                     title={id ? 'Edit lead' : 'Add lead'}
                     add addText='Save'

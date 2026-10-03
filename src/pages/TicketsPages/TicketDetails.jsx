@@ -150,9 +150,7 @@ const TicketDetails = () => {
 
     return (
         <div className='flex flex-col gap-5'>
-            <div className="bg-white p-5 rounded-lg">
-                <PageTitleAddbtn title={'Ticket Details'} displayStatus={<StatusInput />} />
-            </div>
+            <PageTitleAddbtn title={'Ticket Details'} displayStatus={<StatusInput />} />
             <div className="rounded-lg flex flex-col gap-5">
                 <div className="flex flex-row gap-5">
                     <SummaryCard

@@ -94,7 +94,7 @@ const Leads = () => {
       width: 250,
     },
     {
-      title: 'lead No.',
+      title: 'Customer',
       fixed: 'start',
       dataIndex: 'customer',
       key: 'customer',

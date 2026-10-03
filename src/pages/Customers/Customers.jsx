@@ -5,7 +5,7 @@ import { userState } from '../../context/UserContext';
 import { useToast } from '../../context/ToastContext';
 import apiList from '../../config/apiList';
 import api from '../../config/api';
-import { Form, Image } from 'antd';
+import { Form } from 'antd';
 import TableUi from '../../utils/TableUi';
 import InputField from '../../utils/InputField';
 import { useNavigate } from 'react-router-dom';
@@ -100,7 +100,7 @@ const Customers = () => {
             width: 90,
             render: (_, record) => {
                 return (
-                    <UserAvatar image={record?.image?.image && images.imgUrl + record?.image?.image} name={record?.name} />
+                    <UserAvatar image={record?.image?.image} name={record?.name} />
                 )
             },
         },
