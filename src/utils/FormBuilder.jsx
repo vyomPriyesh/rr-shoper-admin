@@ -197,7 +197,7 @@ const FormBuilder = ({ fields, setFields }) => {
                                         ]}
                                     />
                                 </div>
-                                {current.multiple && <InputField value={current.imageLimit || ''} type='number' placeholder='Enter Image Limit' onChange={(e) => update('imageLimit', e.target.value)} />}
+                                {current.multiple && <InputField value={current.imageLimit || ''} type='number' placeholder='Enter Image Limit' onChange={(e) => update('imageLimit', e)} />}
                             </div>
                         )}
                     </>
