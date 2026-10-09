@@ -143,7 +143,7 @@ const FormBuilder = ({ fields, setFields }) => {
                                     type='number'
                                     placeholder='Enter Max Length'
                                     value={current.maxLength || ''}
-                                    onChange={(e) => update('maxLength', e.target.value)}
+                                    onChange={(e) => update('maxLength', e)}
                                 />
                             </div>
                         )}
