@@ -26,9 +26,10 @@ import AddUpdateLead from '../pages/LeadsPages/AddUpdateLead';
 import LeadDetails from '../pages/LeadsPages/LeadDetails';
 import Customers from '../pages/Customers/Customers';
 import CustomerDetails from '../pages/Customers/CustomerDetails';
-import { IoTicketSharp } from 'react-icons/io5';
+import { IoEarthSharp, IoTicketSharp } from 'react-icons/io5';
 import Tickets from '../pages/TicketsPages/Tickets';
 import TicketDetails from '../pages/TicketsPages/TicketDetails';
+import Website from '../pages/Website';
 
 const Admin = ({ role }) => {
 
@@ -42,6 +43,10 @@ const Admin = ({ role }) => {
         {
             name: "Dashboards", to: "dashboard", role: role,
             icon: LuLayoutDashboard
+        },
+        {
+            name: "Website", to: "website", role: role,
+            icon: IoEarthSharp
         },
         {
             name: 'Platforms', to: 'platforms/view', role: role,
@@ -128,6 +133,9 @@ const Admin = ({ role }) => {
                 </div>
                 <div className={`flex-grow overflow-y-auto overflow-hidden p-5 border border-borderColor bg-background rounded-lg mb-5 mr-5 menu ${isExpanded ? "translate-x-0 w-full" : "w-72 lg:w-4/5"}`}>
                     <Routes>
+                        <Route element={<CanAccessRoute module_name="Website" />}>
+                            <Route path="website" element={<Website />} />
+                        </Route>
                         <Route element={<CanAccessRoute module_name="Platforms" />}>
                             <Route path="platforms/view" element={<Platforms />} />
                         </Route>

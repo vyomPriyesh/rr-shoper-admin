@@ -4,6 +4,9 @@ const apiList = () => {
             profile: "profile",
             login: 'login',
         },
+        website: {
+            data: 'websiteData'
+        },
 
         allOptions: {
             get: 'admin-all-options',
@@ -23,7 +26,7 @@ const apiList = () => {
             updateCustomerPassword: (id, password) => `customers/update-customer/${id}/${password}`,
             allPayments: (id) => `customers/payments/${id}`,
             invoice: (invoice, customerId) => `payment/invoice/${invoice}/${customerId}`,
-            serviceUpdates:(subscriptionId)=>`servicesUpdates/${subscriptionId}`
+            serviceUpdates: (subscriptionId) => `servicesUpdates/${subscriptionId}`
         },
 
         users: {
