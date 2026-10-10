@@ -107,6 +107,8 @@ const Packages = () => {
             name: data.name,
             onetime_price: data.onetime_price,
             month_price: data.month_price,
+            "3month_price": data['3month_price'],
+            "6month_price": data['6month_price'],
             year_price: data.year_price,
             services: data.services,
         })
@@ -153,10 +155,10 @@ const Packages = () => {
             </Popover>
         },
         {
-            title: 'Price Life Time/Month/Year',
+            title: 'Price Life Time/Month/3Month/6Month/Year',
             dataIndex: 'price',
             key: 'price',
-            render: (_, record) => `${record?.onetime_price}/${record?.month_price}/${record?.year_price}`
+            render: (_, record) => `${record?.onetime_price}/${record?.month_price}/${record['3month_price']}/${record['6month_price']}/${record?.year_price}`
         },
         {
             title: 'Status',
@@ -189,7 +191,7 @@ const Packages = () => {
             />
             <CommanModal title='Add Package' width={1000} open={isOpenAddModal} onDone={handleAddPackage} onClose={() => setIsOpenAddModal(!isOpenAddModal)}>
                 <Form form={form} className='flex flex-col gap-5'>
-                    <div className="flex flex-row gap-5">
+                    <div className="grid grid-cols-4 gap-5">
                         <Form.Item name='platform' className='w-full'
                             rules={[
                                 { required: true, message: "Platform is required" },
@@ -220,12 +222,32 @@ const Packages = () => {
                         </Form.Item>
                         <Form.Item name='month_price' className='w-full'
                             rules={[
-                                { required: true, message: "Month Price is required" },
+                                { required: true, message: "One Month Price is required" },
                             ]}
                         >
                             <InputField
                                 type="number"
-                                placeholder="Enter Month Price"
+                                placeholder="Enter One Month Price"
+                            />
+                        </Form.Item>
+                        <Form.Item name='3month_price' className='w-full'
+                            rules={[
+                                { required: true, message: "3 Month Price is required" },
+                            ]}
+                        >
+                            <InputField
+                                type="number"
+                                placeholder="Enter Three Month Price"
+                            />
+                        </Form.Item>
+                        <Form.Item name='6month_price' className='w-full'
+                            rules={[
+                                { required: true, message: "6 Month Price is required" },
+                            ]}
+                        >
+                            <InputField
+                                type="number"
+                                placeholder="Enter Six Month Price"
                             />
                         </Form.Item>
                         <Form.Item name='year_price' className='w-full'

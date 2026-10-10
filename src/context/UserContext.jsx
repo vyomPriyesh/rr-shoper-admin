@@ -38,7 +38,8 @@ export const UserProvider = ({ children }) => {
     };
 
     const { data: { data: { data: options = {} } = {} } = {}, isLoading: optionsLoading } = useQuery({
-        queryFn: () => api.get(allOptions.get)
+        queryFn: () => api.get(allOptions.get),
+        enabled: !!user?.token
     })
 
     const hasPermission = (module_name, showModal, redirect, forAction) => {
