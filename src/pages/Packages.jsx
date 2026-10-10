@@ -155,9 +155,10 @@ const Packages = () => {
             </Popover>
         },
         {
-            title: 'Price Life Time/Month/3Month/6Month/Year',
+            title: 'Price One Time/Month/3Month/6Month/Year',
             dataIndex: 'price',
             key: 'price',
+            width: 380,
             render: (_, record) => `${record?.onetime_price}/${record?.month_price}/${record['3month_price']}/${record['6month_price']}/${record?.year_price}`
         },
         {
