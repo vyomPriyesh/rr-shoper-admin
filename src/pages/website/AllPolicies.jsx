@@ -1,20 +1,15 @@
-import { useMemo, useState } from 'react'
-import { Form, Popconfirm, Tabs } from 'antd'
-import { BsFillPencilFill } from 'react-icons/bs'
-import { RiDeleteBin6Line } from 'react-icons/ri'
-import { HolderOutlined } from '@ant-design/icons'
-import PageTitleAddbtn from '../utils/PageTitleAddbtn'
-import CommanModal from '../utils/CommanModal'
-import InputField from '../utils/InputField'
-import ButtonUi from '../utils/ButtonUi'
+import React, { useMemo, useState } from 'react'
+import ButtonUi from '../../utils/ButtonUi'
 import { DndContext } from '@dnd-kit/core'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { BsFillPencilFill } from 'react-icons/bs'
+import { RiDeleteBin6Line } from 'react-icons/ri'
+import { HolderOutlined } from '@ant-design/icons'
 import { CSS } from '@dnd-kit/utilities'
-import { v4 as uuid } from 'uuid'
-import { useQuery } from '@tanstack/react-query'
-import api from '../config/api'
-import apiList from '../config/apiList'
+import { Form, Popconfirm } from 'antd'
+import CommanModal from '../../utils/CommanModal'
+import InputField from '../../utils/InputField'
 
 const SortablePolicySection = ({ policy, onEdit, onDelete }) => {
     const {
@@ -90,7 +85,7 @@ const SortablePolicySection = ({ policy, onEdit, onDelete }) => {
 }
 
 const PolicySections = ({ policies, onAdd, onEdit, onDelete, onDragEnd }) => (
-    <div className="flex flex-col gap-4 p-5">
+    <div className="flex flex-col gap-4 px-5 pb-5">
         <ButtonUi text='Add New' className='ms-auto' onClick={onAdd} type='button' />
         <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
             <SortableContext items={policies.map((policy) => policy._id)} strategy={verticalListSortingStrategy}>
@@ -107,66 +102,39 @@ const PolicySections = ({ policies, onAdd, onEdit, onDelete, onDragEnd }) => (
     </div>
 )
 
-const Website = () => {
 
-    const { website } = apiList();
+const AllPolicies = ({ activeTab, initialPoliciesByTab, handleSaveData }) => {
 
-    const [packageTabIndex, setPackageTabIndex] = useState('privacy-policy')
-    const [form] = Form.useForm()
     const [editingPolicy, setEditingPolicy] = useState(null)
     const [policyGroups, setPolicyGroups] = useState(null)
-
-    const contactDetails = {
-        mobile: '+91 9499839239',
-        email: 'sellersupport@rrshoper.in',
-    }
-
-    const { data: { privacypoliciesPoints = [], termsConditionsPoints = [], refundPolicy = [] } = {} } = useQuery({
-        queryKey: ['website-data'],
-        queryFn: () => api.get(website.data),
-        select: ({ data }) => {
-            const response = data.data.result
-            return {
-                privacypoliciesPoints: response?.privacyPolicy || [],
-                termsConditionsPoints: response?.termsCondition || [],
-                refundPolicy: response?.refundPolicy || [],
-            }
-        }
-    })
-
-
-    const initialPoliciesByTab = useMemo(() => {
-        const policies = {
-            'privacy-policy': privacypoliciesPoints,
-            'terms-conditions': termsConditionsPoints,
-            'refund-cancellation': refundPolicy,
-        }
-        return Object.fromEntries(
-            Object.entries(policies).map(([tabKey, items]) => [
-                tabKey,
-                items.map((policy, index) => ({ ...policy, _id: uuid(), index })),
-            ])
-        )
-    }, [refundPolicy, privacypoliciesPoints, termsConditionsPoints])
+    const [form] = Form.useForm()
 
     const policiesByTab = policyGroups || initialPoliciesByTab
+
+    const savePolicyGroups = (groups) => {
+        setPolicyGroups(groups)
+        handleSaveData({
+            privacyPolicy: groups['privacy-policy'].map(({ _id, ...policy }) => policy),
+            termsCondition: groups['terms-conditions'].map(({ _id, ...policy }) => policy),
+            refundPolicy: groups['refund-cancellation'].map(({ _id, ...policy }) => policy),
+        }, {
+            onSettled: () => setPolicyGroups(null),
+        })
+    }
 
     const handleDragEnd = (tabKey, { active, over }) => {
         if (!over || active.id === over.id) return
 
-        setPolicyGroups((currentGroups) => {
-            const groups = currentGroups || initialPoliciesByTab
-            const tabPolicies = groups[tabKey]
-            const activeIndex = tabPolicies.findIndex((policy) => policy._id === active.id)
-            const overIndex = tabPolicies.findIndex((policy) => policy._id === over.id)
+        const tabPolicies = policiesByTab[tabKey]
+        const activeIndex = tabPolicies.findIndex((policy) => policy._id === active.id)
+        const overIndex = tabPolicies.findIndex((policy) => policy._id === over.id)
 
-            if (activeIndex < 0 || overIndex < 0) return groups
+        if (activeIndex < 0 || overIndex < 0) return
 
-            const reorderedPolicies = arrayMove(tabPolicies, activeIndex, overIndex)
-                .map((policy, index) => ({ ...policy, index }))
+        const reorderedPolicies = arrayMove(tabPolicies, activeIndex, overIndex)
+            .map((policy, index) => ({ ...policy, index }))
 
-            return { ...groups, [tabKey]: reorderedPolicies }
-        })
+        savePolicyGroups({ ...policiesByTab, [tabKey]: reorderedPolicies })
     }
 
     const handleEdit = (tabKey, policy) => {
@@ -193,19 +161,16 @@ const Website = () => {
             subtitle: values.subtitle.trim(),
             points: (values.points || []).map((point) => point?.trim()).filter(Boolean),
         }
-        setPolicyGroups((currentGroups) => {
-            const groups = currentGroups || initialPoliciesByTab
-            const tabPolicies = [...groups[editingPolicy.tabKey]]
-            if (editingPolicy.isNew) {
-                tabPolicies.push({ ...policy, index: tabPolicies.length })
-            } else {
-                tabPolicies[editingPolicy.policyIndex] = {
-                    ...tabPolicies[editingPolicy.policyIndex],
-                    ...policy,
-                }
+        const tabPolicies = [...policiesByTab[editingPolicy.tabKey]]
+        if (editingPolicy.isNew) {
+            tabPolicies.push({ ...policy, index: tabPolicies.length })
+        } else {
+            tabPolicies[editingPolicy.policyIndex] = {
+                ...tabPolicies[editingPolicy.policyIndex],
+                ...policy,
             }
-            return { ...groups, [editingPolicy.tabKey]: tabPolicies }
-        })
+        }
+        savePolicyGroups({ ...policiesByTab, [editingPolicy.tabKey]: tabPolicies })
         setEditingPolicy(null)
         form.resetFields()
     }
@@ -216,79 +181,21 @@ const Website = () => {
     }
 
     const handleDelete = (tabKey, policy) => {
-        setPolicyGroups((currentGroups) => {
-            const groups = currentGroups || initialPoliciesByTab
-            return {
-                ...groups,
-                [tabKey]: groups[tabKey]
-                    .filter((item) => item._id !== policy._id)
-                    .map((item, index) => ({ ...item, index })),
-            }
-        })
+        const tabPolicies = policiesByTab[tabKey]
+            .filter((item) => item._id !== policy._id)
+            .map((item, index) => ({ ...item, index }))
+        savePolicyGroups({ ...policiesByTab, [tabKey]: tabPolicies })
     }
 
     return (
-        <div className='flex flex-col gap-5'>
-            <PageTitleAddbtn title='Website' />
-            <div className="bg-white rounded-lg">
-                <Tabs
-                    activeKey={packageTabIndex}
-                    onChange={setPackageTabIndex}
-                    items={[
-                        {
-                            key: 'privacy-policy',
-                            label: (
-                                <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === 'privacy-policy' ? 'text-primary' : 'text-gray-600'}`}>
-                                    Privacy Policy
-                                </span>
-                            ),
-                            children: (
-                                <PolicySections
-                                    policies={policiesByTab['privacy-policy']}
-                                    onAdd={() => handleAdd('privacy-policy')}
-                                    onEdit={(policy) => handleEdit('privacy-policy', policy)}
-                                    onDelete={(policy) => handleDelete('privacy-policy', policy)}
-                                    onDragEnd={(event) => handleDragEnd('privacy-policy', event)}
-                                />
-                            ),
-                        },
-                        {
-                            key: 'terms-conditions',
-                            label: (
-                                <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === 'terms-conditions' ? 'text-primary' : 'text-gray-600'}`}>
-                                    Terms & Conditions
-                                </span>
-                            ),
-                            children: (
-                                <PolicySections
-                                    policies={policiesByTab['terms-conditions']}
-                                    onAdd={() => handleAdd('terms-conditions')}
-                                    onEdit={(policy) => handleEdit('terms-conditions', policy)}
-                                    onDelete={(policy) => handleDelete('terms-conditions', policy)}
-                                    onDragEnd={(event) => handleDragEnd('terms-conditions', event)}
-                                />
-                            ),
-                        },
-                        {
-                            key: 'refund-cancellation',
-                            label: (
-                                <span className={`px-4 py-1.5 text-base font-medium inline-flex items-center rounded-md ${packageTabIndex === 'refund-cancellation' ? 'text-primary' : 'text-gray-600'}`}>
-                                    Refund & Cancellation
-                                </span>
-                            ),
-                            children: (
-                                <PolicySections
-                                    policies={policiesByTab['refund-cancellation']}
-                                    onAdd={() => handleAdd('refund-cancellation')}
-                                    onEdit={(policy) => handleEdit('refund-cancellation', policy)}
-                                    onDelete={(policy) => handleDelete('refund-cancellation', policy)}
-                                    onDragEnd={(event) => handleDragEnd('refund-cancellation', event)}
-                                />
-                            ),
-                        },
-                    ]}
-                />
-            </div>
+        <>
+            <PolicySections
+                policies={policiesByTab[activeTab] || []}
+                onAdd={() => handleAdd(activeTab)}
+                onEdit={(policy) => handleEdit(activeTab, policy)}
+                onDelete={(policy) => handleDelete(activeTab, policy)}
+                onDragEnd={(event) => handleDragEnd(activeTab, event)}
+            />
             <CommanModal
                 open={!!editingPolicy}
                 title={`${editingPolicy?.isNew ? 'Add' : 'Edit'} ${editingPolicy?.title || 'Policy Section'}`}
@@ -345,8 +252,8 @@ const Website = () => {
                     </Form.List>
                 </Form>
             </CommanModal>
-        </div>
+        </>
     )
 }
 
-export default Website
+export default AllPolicies

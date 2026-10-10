@@ -29,7 +29,7 @@ import CustomerDetails from '../pages/Customers/CustomerDetails';
 import { IoEarthSharp, IoTicketSharp } from 'react-icons/io5';
 import Tickets from '../pages/TicketsPages/Tickets';
 import TicketDetails from '../pages/TicketsPages/TicketDetails';
-import Website from '../pages/Website';
+import Website from '../pages/website/Website';
 
 const Admin = ({ role }) => {
 

@@ -5,7 +5,8 @@ const apiList = () => {
             login: 'login',
         },
         website: {
-            data: 'websiteData'
+            data: 'websiteData',
+            update:'websiteUpdate'
         },
 
         allOptions: {
